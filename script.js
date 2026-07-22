@@ -1,4 +1,29 @@
-// Date/time
+// sidebar navigation
+const sidebar = document.getElementById("sidebar");
+const navItems = document.querySelectorAll(".nav-item");
+const panels = {
+  dashboard: document.getElementById("dashboard-panel"),
+  shortcuts: document.getElementById("shortcuts-panel"),
+  youtube: document.getElementById("youtube-panel"),
+  calendar: document.getElementById("calendar-panel"),
+};
+
+function showPanel(name) {
+  Object.values(panels).forEach((panel) => panel.classList.remove("active"));
+  if (panels[name]) panels[name].classList.add("active");
+
+  navItems.forEach((btn) => btn.classList.toggle("active", btn.dataset.panel === name));
+}
+
+navItems.forEach((btn) => {
+  btn.addEventListener("click", () => showPanel(btn.dataset.panel));
+});
+
+document.getElementById("sidebarToggle").addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+});
+
+// date/time
 function updateDateTime() {
   const now = new Date();
 
@@ -93,6 +118,7 @@ function loadVideos() {
   const videoList = document.getElementById("videoList");
   const videos = getVideos();
 
+  document.getElementById("videoCount").textContent = String(videos.length);
   videoList.innerHTML = "";
 
   if (videos.length === 0) {
@@ -123,6 +149,7 @@ function loadVideos() {
 
       if (action === "play") {
         playVideo(videos[index]);
+        showPanel("youtube");
       }
 
       if (action === "delete") {
@@ -183,8 +210,8 @@ function setEvents(events) {
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
-function monthName(monthIndex) {
-  return new Date(currentYear, monthIndex, 1).toLocaleDateString("en-US", {
+function monthName(monthIndex, year) {
+  return new Date(year, monthIndex, 1).toLocaleDateString("en-US", {
     month: "long"
   });
 }
@@ -194,12 +221,14 @@ function renderCalendar() {
   const monthLabel = document.getElementById("monthLabel");
   const events = getEvents();
 
+  document.getElementById("eventCount").textContent = String(events.length);
+
   const firstDay = new Date(currentYear, currentMonth, 1);
   const startDay = (firstDay.getDay() + 6) % 7; // Monday-first
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
 
-  monthLabel.textContent = `${monthName(currentMonth)} ${currentYear}`;
+  monthLabel.textContent = `${monthName(currentMonth, currentYear)} ${currentYear}`;
   grid.innerHTML = "";
 
   const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -210,7 +239,7 @@ function renderCalendar() {
     grid.appendChild(el);
   });
 
-  const totalCells = 42; // 6 weeks
+  const totalCells = 42;
   const today = new Date();
 
   for (let i = 0; i < totalCells; i++) {
@@ -368,7 +397,7 @@ document.getElementById("nextMonth").addEventListener("click", () => {
   renderCalendar();
 });
 
-// reminders while the page is open
+// reminders while page is open
 let alertedEvents = new Set();
 
 function checkReminders() {
@@ -391,3 +420,6 @@ function checkReminders() {
 renderCalendar();
 setInterval(checkReminders, 30000);
 checkReminders();
+
+// start on dashboard
+showPanel("dashboard");
