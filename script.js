@@ -5,15 +5,9 @@ const shortcutButtons = document.querySelectorAll(".shortcut-btn");
 
 const panels = {
   home: document.getElementById("home-panel"),
-  dashboard: document.getElementById("dashboard-panel"),
-  talk: document.getElementById("talk-panel"),
   shortcuts: document.getElementById("shortcuts-panel"),
-  media: document.getElementById("media-panel"),
   tube: document.getElementById("tube-panel"),
-  today: document.getElementById("today-panel"),
   calendar: document.getElementById("calendar-panel"),
-  settings: document.getElementById("settings-panel"),
-  customization: document.getElementById("customization-panel"),
 };
 
 function showPanel(name) {
@@ -30,7 +24,6 @@ function showPanel(name) {
   });
 }
 
-// one click listener for the whole sidebar
 document.querySelector(".nav").addEventListener("click", (e) => {
   const btn = e.target.closest(".nav-item");
   if (!btn) return;
@@ -49,7 +42,7 @@ sidebarToggle.addEventListener("click", () => {
   sidebarToggle.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
 });
 
-// date/time
+// Date and time
 function updateDateTime() {
   const now = new Date();
 
@@ -70,7 +63,7 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// day/night mode
+// Day / night mode
 function getModeByHour(hour) {
   if (hour >= 6 && hour < 11) return "morning";
   if (hour >= 11 && hour < 18) return "day";
@@ -86,9 +79,6 @@ function applyTimeMode() {
 
   const modeText = document.getElementById("modeText");
   const modeIcon = document.getElementById("modeIcon");
-  const dashboardMode = document.getElementById("dashboardMode");
-  const todayMode = document.getElementById("todayMode");
-  const settingsMode = document.getElementById("settingsMode");
 
   let label = "Day Mode";
   let icon = "◐";
@@ -96,23 +86,107 @@ function applyTimeMode() {
   if (mode === "morning") {
     label = "Morning Mode";
     icon = "☀";
-  } else if (mode === "day") {
-    label = "Day Mode";
-    icon = "◐";
-  } else {
+  } else if (mode === "night") {
     label = "Night Mode";
     icon = "☾";
   }
 
   if (modeText) modeText.textContent = label;
   if (modeIcon) modeIcon.textContent = icon;
-  if (dashboardMode) dashboardMode.textContent = "Auto";
-  if (todayMode) todayMode.textContent = "Auto";
-  if (settingsMode) settingsMode.textContent = "Auto";
 }
 
 applyTimeMode();
 setInterval(applyTimeMode, 60000);
+
+// Shortcut wheel
+const shortcutApps = [
+  { name: "YouTube", icon: "▶", hint: "Open YouTube", url: "https://www.youtube.com" },
+  { name: "Spotify", icon: "♫", hint: "Open Spotify", url: "https://open.spotify.com" },
+  { name: "Browser", icon: "⌂", hint: "Open Google", url: "https://www.google.com" },
+  { name: "Bing", icon: "B", hint: "Open Bing", url: "https://www.bing.com" },
+  { name: "Drive", icon: "D", hint: "Open Google Drive", url: "https://drive.google.com" },
+  { name: "Gmail", icon: "@", hint: "Open Gmail", url: "https://mail.google.com" },
+];
+
+let selectedShortcut = 0;
+
+const shortcutWheel = document.getElementById("shortcutWheel");
+const shortcutOpenBtn = document.getElementById("shortcutOpenBtn");
+const shortcutActiveLabel = document.getElementById("shortcutActiveLabel");
+const shortcutActiveHint = document.getElementById("shortcutActiveHint");
+const shortcutActiveIcon = document.getElementById("shortcutActiveIcon");
+
+function renderShortcutWheel() {
+  const items = document.querySelectorAll(".wheel-item");
+
+  items.forEach((item, index) => {
+    item.classList.toggle("active", index === selectedShortcut);
+    item.setAttribute("aria-pressed", index === selectedShortcut ? "true" : "false");
+  });
+
+  const active = shortcutApps[selectedShortcut];
+  shortcutWheel.style.setProperty("--rotation-offset", `${-90 - selectedShortcut * 60}deg`);
+
+  if (shortcutActiveLabel) shortcutActiveLabel.textContent = active.name;
+  if (shortcutActiveHint) shortcutActiveHint.textContent = active.hint;
+  if (shortcutActiveIcon) shortcutActiveIcon.textContent = active.icon;
+}
+
+function selectShortcut(index) {
+  selectedShortcut = (index + shortcutApps.length) % shortcutApps.length;
+  renderShortcutWheel();
+}
+
+function openShortcut(index = selectedShortcut) {
+  const app = shortcutApps[index];
+  window.open(app.url, "_blank", "noopener,noreferrer");
+}
+
+document.querySelectorAll(".wheel-item").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const index = Number(btn.dataset.index);
+    selectShortcut(index);
+    openShortcut(index);
+  });
+});
+
+if (shortcutOpenBtn) {
+  shortcutOpenBtn.addEventListener("click", () => {
+    openShortcut(selectedShortcut);
+  });
+}
+
+const shortcutPrev = document.getElementById("shortcutPrev");
+const shortcutNext = document.getElementById("shortcutNext");
+
+if (shortcutPrev) {
+  shortcutPrev.addEventListener("click", () => {
+    selectShortcut(selectedShortcut - 1);
+  });
+}
+
+if (shortcutNext) {
+  shortcutNext.addEventListener("click", () => {
+    selectShortcut(selectedShortcut + 1);
+  });
+}
+
+if (shortcutWheel) {
+  shortcutWheel.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        selectShortcut(selectedShortcut + 1);
+      } else {
+        selectShortcut(selectedShortcut - 1);
+      }
+    },
+    { passive: false }
+  );
+}
+
+renderShortcutWheel();
 
 // YouTube saver
 function getVideos() {
@@ -275,7 +349,7 @@ if (videoUrl) {
 
 loadVideos();
 
-// calendar
+// Calendar
 function getEvents() {
   try {
     return JSON.parse(localStorage.getItem("savedEvents") || "[]");
@@ -300,86 +374,6 @@ function dateKey(dateObj) {
   const m = String(dateObj.getMonth() + 1).padStart(2, "0");
   const d = String(dateObj.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
-}
-
-function renderTodayPanel() {
-  const todayEventsEl = document.getElementById("todayEvents");
-  const todayCountEl = document.getElementById("todayCount");
-  if (!todayEventsEl || !todayCountEl) return;
-
-  const today = dateKey(new Date());
-  const events = getEvents()
-    .filter((ev) => ev.date === today)
-    .sort((a, b) => {
-      const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-      const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-      return aTime - bTime;
-    });
-
-  todayCountEl.textContent = String(events.length);
-  todayEventsEl.innerHTML = "";
-
-  if (events.length === 0) {
-    todayEventsEl.innerHTML = `<div class="empty-state">No events today.</div>`;
-    return;
-  }
-
-  events.forEach((ev) => {
-    const item = document.createElement("div");
-    item.className = "event-item";
-    item.innerHTML = `
-      <p class="event-title">${ev.title}</p>
-      <div>${ev.time ? ev.time : "All day"}</div>
-      <div>Reminder: ${ev.reminderMinutes} min before</div>
-    `;
-    todayEventsEl.appendChild(item);
-  });
-}
-
-function renderEventsList() {
-  const list = document.getElementById("eventsList");
-  const events = getEvents().sort((a, b) => {
-    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-    return aTime - bTime;
-  });
-
-  if (!list) return;
-  list.innerHTML = "";
-
-  if (events.length === 0) {
-    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
-    return;
-  }
-
-  events.forEach((ev, index) => {
-    const item = document.createElement("div");
-    item.className = "event-item";
-    item.innerHTML = `
-      <p class="event-title">${ev.title}</p>
-      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
-      <div>Reminder: ${ev.reminderMinutes} min before</div>
-      <div class="video-actions" style="margin-top:10px;">
-        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-
-  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.deleteEvent);
-      const events = getEvents().sort((a, b) => {
-        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-        return aTime - bTime;
-      });
-
-      events.splice(index, 1);
-      setEvents(events);
-      renderCalendar();
-    });
-  });
 }
 
 function renderCalendar() {
@@ -470,7 +464,52 @@ function renderCalendar() {
   }
 
   renderEventsList();
-  renderTodayPanel();
+}
+
+function renderEventsList() {
+  const list = document.getElementById("eventsList");
+  const events = getEvents().sort((a, b) => {
+    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+    return aTime - bTime;
+  });
+
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (events.length === 0) {
+    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
+    return;
+  }
+
+  events.forEach((ev, index) => {
+    const item = document.createElement("div");
+    item.className = "event-item";
+    item.innerHTML = `
+      <p class="event-title">${ev.title}</p>
+      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
+      <div>Reminder: ${ev.reminderMinutes} min before</div>
+      <div class="video-actions" style="margin-top:10px;">
+        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.deleteEvent);
+      const events = getEvents().sort((a, b) => {
+        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+        return aTime - bTime;
+      });
+
+      events.splice(index, 1);
+      setEvents(events);
+      renderCalendar();
+    });
+  });
 }
 
 function addEvent() {
