@@ -17,29 +17,32 @@
       <div class="sidebar-top">
         <div class="brand">
           <div class="brand-mark"></div>
-          <div>
+          <div class="brand-text">
             <div class="brand-title">JARVIS</div>
             <div class="brand-subtitle">STARK OS</div>
           </div>
         </div>
 
-        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">⟨</button>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse sidebar">⟨</button>
       </div>
 
       <div class="nav">
-        <button class="nav-item active" data-panel="home">
+        <button class="nav-item active" data-panel="home" type="button">
           <span class="nav-icon">⌂</span>
           <span class="nav-label">Home</span>
         </button>
-        <button class="nav-item" data-panel="shortcuts">
+
+        <button class="nav-item" data-panel="shortcuts" type="button">
           <span class="nav-icon">↗</span>
           <span class="nav-label">Shortcuts</span>
         </button>
-        <button class="nav-item" data-panel="tube">
+
+        <button class="nav-item" data-panel="tube" type="button">
           <span class="nav-icon">▶</span>
           <span class="nav-label">Saved Videos</span>
         </button>
-        <button class="nav-item" data-panel="calendar">
+
+        <button class="nav-item" data-panel="calendar" type="button">
           <span class="nav-icon">🗓</span>
           <span class="nav-label">Calendar</span>
         </button>
@@ -95,7 +98,7 @@
 
         <div class="input-row">
           <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
-          <button id="saveBtn" class="neo-btn">Save Video</button>
+          <button id="saveBtn" class="neo-btn" type="button">Save Video</button>
         </div>
 
         <div id="status" class="status">Ready.</div>
@@ -117,9 +120,9 @@
         <div class="panel-title">Calendar</div>
 
         <div class="calendar-topbar">
-          <button id="prevMonth" class="neo-btn">←</button>
+          <button id="prevMonth" class="neo-btn" type="button">←</button>
           <div id="monthLabel" class="month-label">Month</div>
-          <button id="nextMonth" class="neo-btn">→</button>
+          <button id="nextMonth" class="neo-btn" type="button">→</button>
         </div>
 
         <div id="calendarGrid" class="calendar-grid"></div>
@@ -130,7 +133,7 @@
           <input id="eventDate" type="date" />
           <input id="eventTime" type="time" />
           <input id="reminderMinutes" type="number" min="0" value="10" placeholder="Reminder minutes before" />
-          <button id="addEventBtn" class="neo-btn">Add Event</button>
+          <button id="addEventBtn" class="neo-btn" type="button">Add Event</button>
         </div>
 
         <div class="subsection">
