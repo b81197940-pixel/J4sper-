@@ -1,10 +1,12 @@
 // sidebar navigation
 const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
 const navItems = document.querySelectorAll(".nav-item");
+
 const panels = {
-  dashboard: document.getElementById("dashboard-panel"),
+  home: document.getElementById("home-panel"),
   shortcuts: document.getElementById("shortcuts-panel"),
-  youtube: document.getElementById("youtube-panel"),
+  tube: document.getElementById("tube-panel"),
   calendar: document.getElementById("calendar-panel"),
 };
 
@@ -19,11 +21,12 @@ navItems.forEach((btn) => {
   btn.addEventListener("click", () => showPanel(btn.dataset.panel));
 });
 
-document.getElementById("sidebarToggle").addEventListener("click", () => {
+sidebarToggle.addEventListener("click", () => {
   sidebar.classList.toggle("collapsed");
+  sidebarToggle.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
 });
 
-// date/time
+// datetime
 function updateDateTime() {
   const now = new Date();
 
@@ -31,20 +34,53 @@ function updateDateTime() {
     weekday: "long",
     year: "numeric",
     month: "long",
-    day: "numeric"
+    day: "numeric",
   });
 
   document.getElementById("time").textContent = now.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
-    second: "2-digit"
+    second: "2-digit",
   });
 }
 
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// ---------- YouTube ----------
+// day/night mode
+function getModeByHour(hour) {
+  if (hour >= 6 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 18) return "day";
+  return "night";
+}
+
+function applyTimeMode() {
+  const now = new Date();
+  const mode = getModeByHour(now.getHours());
+
+  document.body.classList.remove("theme-morning", "theme-day", "theme-night");
+  document.body.classList.add(`theme-${mode}`);
+
+  const modeText = document.getElementById("modeText");
+  const modeIcon = document.getElementById("modeIcon");
+
+  if (modeText) {
+    if (mode === "morning") modeText.textContent = "Morning Mode";
+    if (mode === "day") modeText.textContent = "Day Mode";
+    if (mode === "night") modeText.textContent = "Night Mode";
+  }
+
+  if (modeIcon) {
+    if (mode === "morning") modeIcon.textContent = "☀";
+    if (mode === "day") modeIcon.textContent = "◐";
+    if (mode === "night") modeIcon.textContent = "☾";
+  }
+}
+
+applyTimeMode();
+setInterval(applyTimeMode, 60000);
+
+// youtube
 function getVideos() {
   try {
     return JSON.parse(localStorage.getItem("savedVideos") || "[]");
@@ -55,10 +91,6 @@ function getVideos() {
 
 function setVideos(videos) {
   localStorage.setItem("savedVideos", JSON.stringify(videos));
-}
-
-function showStatus(message) {
-  document.getElementById("status").textContent = message;
 }
 
 function normalizeYouTubeUrl(input) {
@@ -86,9 +118,12 @@ function normalizeYouTubeUrl(input) {
   }
 }
 
+function showStatus(message) {
+  document.getElementById("status").textContent = message;
+}
+
 function renderPlayer(embedUrl, label = "Playing now") {
-  const playerArea = document.getElementById("playerArea");
-  playerArea.innerHTML = `
+  document.getElementById("playerArea").innerHTML = `
     <div class="video-item">
       <p class="video-item-title">${label}</p>
       <div class="video-frame">
@@ -149,7 +184,7 @@ function loadVideos() {
 
       if (action === "play") {
         playVideo(videos[index]);
-        showPanel("youtube");
+        showPanel("tube");
       }
 
       if (action === "delete") {
@@ -171,8 +206,7 @@ function saveVideo() {
     return;
   }
 
-  const embedUrl = normalizeYouTubeUrl(url);
-  if (!embedUrl) {
+  if (!normalizeYouTubeUrl(url)) {
     showStatus("That does not look like a valid YouTube link.");
     return;
   }
@@ -192,9 +226,8 @@ document.getElementById("videoUrl").addEventListener("keydown", (e) => {
 });
 
 loadVideos();
-showStatus("Ready.");
 
-// ---------- Calendar ----------
+// calendar
 function getEvents() {
   try {
     return JSON.parse(localStorage.getItem("savedEvents") || "[]");
@@ -211,9 +244,7 @@ let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
 function monthName(monthIndex, year) {
-  return new Date(year, monthIndex, 1).toLocaleDateString("en-US", {
-    month: "long"
-  });
+  return new Date(year, monthIndex, 1).toLocaleDateString("en-US", { month: "long" });
 }
 
 function renderCalendar() {
@@ -224,15 +255,14 @@ function renderCalendar() {
   document.getElementById("eventCount").textContent = String(events.length);
 
   const firstDay = new Date(currentYear, currentMonth, 1);
-  const startDay = (firstDay.getDay() + 6) % 7; // Monday-first
+  const startDay = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
 
   monthLabel.textContent = `${monthName(currentMonth, currentYear)} ${currentYear}`;
   grid.innerHTML = "";
 
-  const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  dayNames.forEach((name) => {
+  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((name) => {
     const el = document.createElement("div");
     el.className = "day-name";
     el.textContent = name;
@@ -319,7 +349,7 @@ function renderEventsList() {
     const item = document.createElement("div");
     item.className = "event-item";
     item.innerHTML = `
-      <div class="event-title">${ev.title}</div>
+      <p class="event-title">${ev.title}</p>
       <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
       <div>Reminder: ${ev.reminderMinutes} min before</div>
       <div class="video-actions" style="margin-top:10px;">
@@ -341,7 +371,6 @@ function renderEventsList() {
       events.splice(index, 1);
       setEvents(events);
       renderCalendar();
-      showStatus("Event deleted.");
     });
   });
 }
@@ -352,10 +381,7 @@ function addEvent() {
   const time = document.getElementById("eventTime").value;
   const reminderMinutes = Number(document.getElementById("reminderMinutes").value || 0);
 
-  if (!title || !date) {
-    showStatus("Enter a title and date first.");
-    return;
-  }
+  if (!title || !date) return;
 
   const events = getEvents();
   events.push({
@@ -374,11 +400,9 @@ function addEvent() {
   document.getElementById("reminderMinutes").value = "10";
 
   renderCalendar();
-  showStatus("Event saved.");
 }
 
 document.getElementById("addEventBtn").addEventListener("click", addEvent);
-
 document.getElementById("prevMonth").addEventListener("click", () => {
   currentMonth--;
   if (currentMonth < 0) {
@@ -387,7 +411,6 @@ document.getElementById("prevMonth").addEventListener("click", () => {
   }
   renderCalendar();
 });
-
 document.getElementById("nextMonth").addEventListener("click", () => {
   currentMonth++;
   if (currentMonth > 11) {
@@ -397,66 +420,5 @@ document.getElementById("nextMonth").addEventListener("click", () => {
   renderCalendar();
 });
 
-// reminders while page is open
-let alertedEvents = new Set();
-
-function checkReminders() {
-  const events = getEvents();
-  const now = new Date();
-
-  events.forEach((ev) => {
-    const eventTime = new Date(`${ev.date}T${ev.time || "09:00"}`);
-    const reminderTime = new Date(eventTime.getTime() - ev.reminderMinutes * 60000);
-
-    const key = `${ev.title}-${ev.date}-${ev.time}-${ev.reminderMinutes}`;
-
-    if (now >= reminderTime && now < eventTime && !alertedEvents.has(key)) {
-      alertedEvents.add(key);
-      alert(`Reminder: ${ev.title} is coming up soon.`);
-    }
-  });
-}
-
 renderCalendar();
-setInterval(checkReminders, 30000);
-checkReminders();
-
-// start on dashboard
-showPanel("dashboard");
-function getModeByHour(hour) {
-  // Morning: 6 AM - 10:59 AM
-  if (hour >= 6 && hour < 11) return "morning";
-
-  // Day: 11 AM - 5:59 PM
-  if (hour >= 11 && hour < 18) return "day";
-
-  // Night: 6 PM - 5:59 AM
-  return "night";
-}
-
-function applyTimeMode() {
-  const now = new Date();
-  const hour = now.getHours();
-  const mode = getModeByHour(hour);
-
-  document.body.classList.remove("theme-morning", "theme-day", "theme-night");
-  document.body.classList.add(`theme-${mode}`);
-
-  const modeText = document.getElementById("modeText");
-  const modeIcon = document.getElementById("modeIcon");
-
-  if (modeText) {
-    if (mode === "morning") modeText.textContent = "Morning Mode";
-    if (mode === "day") modeText.textContent = "Day Mode";
-    if (mode === "night") modeText.textContent = "Night Mode";
-  }
-
-  if (modeIcon) {
-    if (mode === "morning") modeIcon.textContent = "☀";
-    if (mode === "day") modeIcon.textContent = "◐";
-    if (mode === "night") modeIcon.textContent = "☾";
-  }
-}
-
-applyTimeMode();
-setInterval(applyTimeMode, 60000);
+showPanel("home");
