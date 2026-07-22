@@ -391,3 +391,73 @@ renderCalendar();
 
 // start on main
 showPanel("main");
+:root {
+  --page-brightness: 1;
+  --page-saturation: 1;
+  --page-hue: 0deg;
+  --page-sepia: 0;
+  --page-contrast: 1;
+  --mode-accent: #5df4ff;
+  --mode-glow: rgba(93, 244, 255, 0.12);
+}
+
+body {
+  transition:
+    filter 0.8s ease,
+    background 0.8s ease,
+    color 0.8s ease;
+  filter:
+    brightness(var(--page-brightness))
+    saturate(var(--page-saturation))
+    hue-rotate(var(--page-hue))
+    sepia(var(--page-sepia))
+    contrast(var(--page-contrast));
+}
+
+body.theme-morning {
+  --page-brightness: 1.12;
+  --page-saturation: 1.05;
+  --page-hue: 0deg;
+  --page-sepia: 0;
+  --page-contrast: 1;
+  --mode-accent: #7be8ff;
+  --mode-glow: rgba(93, 244, 255, 0.14);
+}
+
+body.theme-day {
+  --page-brightness: 1.02;
+  --page-saturation: 1.02;
+  --page-hue: 0deg;
+  --page-sepia: 0;
+  --page-contrast: 1;
+  --mode-accent: #5df4ff;
+  --mode-glow: rgba(93, 244, 255, 0.10);
+}
+
+body.theme-night {
+  --page-brightness: 0.76;
+  --page-saturation: 1.12;
+  --page-hue: -16deg;
+  --page-sepia: 0.28;
+  --page-contrast: 0.96;
+  --mode-accent: #ff9a48;
+  --mode-glow: rgba(255, 154, 72, 0.18);
+}
+
+.mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(93, 244, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--mode-accent);
+  box-shadow: 0 0 14px var(--mode-glow);
+  font-size: 0.85rem;
+  transition: color 0.8s ease, box-shadow 0.8s ease, border-color 0.8s ease;
+}
+
+body.theme-night .mode-badge {
+  border-color: rgba(255, 154, 72, 0.24);
+}
