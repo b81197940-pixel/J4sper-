@@ -1,24 +1,18 @@
 function updateDateTime() {
   const now = new Date();
 
-  const dateOptions = {
+  document.getElementById("date").textContent = now.toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric"
-  };
+  });
 
-  const timeOptions = {
+  document.getElementById("time").textContent = now.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit"
-  };
-
-  document.getElementById("date").textContent =
-    now.toLocaleDateString("en-US", dateOptions);
-
-  document.getElementById("time").textContent =
-    now.toLocaleTimeString("en-US", timeOptions);
+  });
 }
 
 updateDateTime();
@@ -44,8 +38,19 @@ function extractYouTubeId(url) {
 
 function getEmbedUrl(url) {
   const videoId = extractYouTubeId(url);
-  if (!videoId) return null;
-  return `https://www.youtube.com/embed/${videoId}`;
+  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+}
+
+function getVideos() {
+  return JSON.parse(localStorage.getItem("savedVideos") || "[]");
+}
+
+function setVideos(videos) {
+  localStorage.setItem("savedVideos", JSON.stringify(videos));
+}
+
+function showStatus(message) {
+  document.getElementById("status").textContent = message;
 }
 
 function playVideo(url) {
@@ -71,7 +76,7 @@ function playVideo(url) {
 
 function loadVideos() {
   const videoList = document.getElementById("videoList");
-  const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
+  const videos = getVideos();
 
   videoList.innerHTML = "";
 
@@ -81,30 +86,33 @@ function loadVideos() {
   }
 
   videos.forEach((url, index) => {
-    const div = document.createElement("div");
-    div.className = "video-item";
-    div.innerHTML = `
-      <p>YouTube Video ${index + 1}</p>
+    const item = document.createElement("div");
+    item.className = "video-item";
+    item.innerHTML = `
+      <p>Saved video ${index + 1}</p>
       <div class="video-actions">
         <button data-action="play" data-index="${index}">Watch</button>
         <button data-action="delete" data-index="${index}">Delete</button>
       </div>
     `;
-    videoList.appendChild(div);
+    videoList.appendChild(item);
   });
 
   videoList.querySelectorAll("button").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = Number(btn.dataset.index);
       const action = btn.dataset.action;
-      const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
+      const videos = getVideos();
 
       if (action === "play") {
         playVideo(videos[index]);
-      } else if (action === "delete") {
+      }
+
+      if (action === "delete") {
         videos.splice(index, 1);
-        localStorage.setItem("savedVideos", JSON.stringify(videos));
+        setVideos(videos);
         loadVideos();
+        showStatus("Video deleted.");
       }
     });
   });
@@ -115,22 +123,24 @@ function saveVideo() {
   const url = input.value.trim();
 
   if (!url) {
-    alert("Paste a YouTube link first.");
+    showStatus("Paste a YouTube link first.");
     return;
   }
 
   if (!getEmbedUrl(url)) {
-    alert("That doesn't look like a valid YouTube link.");
+    showStatus("That does not look like a valid YouTube link.");
     return;
   }
 
-  const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
+  const videos = getVideos();
   videos.push(url);
-  localStorage.setItem("savedVideos", JSON.stringify(videos));
+  setVideos(videos);
 
   input.value = "";
   loadVideos();
+  showStatus("Video saved.");
 }
 
 document.getElementById("saveBtn").addEventListener("click", saveVideo);
 loadVideos();
+showStatus("Ready.");
