@@ -28,7 +28,7 @@
       <div class="button-row">
         <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
         <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
-        <a class="neo-btn" href="https://calendar.google.com" target="_blank" rel="noopener">Calendar</a>
+        <a class="neo-btn" href="#calendar">Calendar</a>
       </div>
     </section>
 
@@ -45,6 +45,32 @@
       <div class="panel-title">Now Playing</div>
       <div id="playerArea" class="player-area">
         <div class="empty-state">No video selected.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="calendar">
+      <div class="panel-title">Calendar</div>
+
+      <div class="calendar-topbar">
+        <button id="prevMonth" class="neo-btn">←</button>
+        <div id="monthLabel" class="month-label">Month</div>
+        <button id="nextMonth" class="neo-btn">→</button>
+      </div>
+
+      <div id="calendarGrid" class="calendar-grid"></div>
+
+      <div class="calendar-form">
+        <h3>Add Event</h3>
+        <input id="eventTitle" type="text" placeholder="Event title" />
+        <input id="eventDate" type="date" />
+        <input id="eventTime" type="time" />
+        <input id="reminderMinutes" type="number" min="0" value="10" placeholder="Reminder minutes before" />
+        <button id="addEventBtn" class="neo-btn">Add Event</button>
+      </div>
+
+      <div class="calendar-events">
+        <h3>Saved Events</h3>
+        <div id="eventsList"></div>
       </div>
     </section>
 
