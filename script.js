@@ -17,18 +17,24 @@ const panels = {
 };
 
 function showPanel(name) {
-  Object.values(panels).forEach((panel) => panel && panel.classList.remove("active"));
-  if (panels[name]) panels[name].classList.add("active");
+  Object.values(panels).forEach((panel) => {
+    if (panel) panel.classList.remove("active");
+  });
+
+  if (panels[name]) {
+    panels[name].classList.add("active");
+  }
 
   navItems.forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.panel === name);
   });
 }
 
-navItems.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    showPanel(btn.dataset.panel);
-  });
+// one click listener for the whole sidebar
+document.querySelector(".nav").addEventListener("click", (e) => {
+  const btn = e.target.closest(".nav-item");
+  if (!btn) return;
+  showPanel(btn.dataset.panel);
 });
 
 shortcutButtons.forEach((btn) => {
@@ -38,42 +44,33 @@ shortcutButtons.forEach((btn) => {
   });
 });
 
-if (sidebarToggle) {
-  sidebarToggle.addEventListener("click", () => {
-    sidebar.classList.toggle("collapsed");
-    sidebarToggle.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
-  });
-}
+sidebarToggle.addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+  sidebarToggle.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
+});
 
-// Date and time
+// date/time
 function updateDateTime() {
   const now = new Date();
 
-  const dateEl = document.getElementById("date");
-  const timeEl = document.getElementById("time");
+  document.getElementById("date").textContent = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
-  if (dateEl) {
-    dateEl.textContent = now.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  }
-
-  if (timeEl) {
-    timeEl.textContent = now.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  }
+  document.getElementById("time").textContent = now.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// Day / night mode
+// day/night mode
 function getModeByHour(hour) {
   if (hour >= 6 && hour < 11) return "morning";
   if (hour >= 11 && hour < 18) return "day";
@@ -117,7 +114,7 @@ function applyTimeMode() {
 applyTimeMode();
 setInterval(applyTimeMode, 60000);
 
-// YouTube vault
+// YouTube saver
 function getVideos() {
   try {
     return JSON.parse(localStorage.getItem("savedVideos") || "[]");
@@ -193,8 +190,8 @@ function playVideo(url) {
 function loadVideos() {
   const videoList = document.getElementById("videoList");
   const videos = getVideos();
-
   const videoCount = document.getElementById("videoCount");
+
   if (videoCount) videoCount.textContent = String(videos.length);
 
   if (!videoList) return;
@@ -278,7 +275,7 @@ if (videoUrl) {
 
 loadVideos();
 
-// Calendar
+// calendar
 function getEvents() {
   try {
     return JSON.parse(localStorage.getItem("savedEvents") || "[]");
@@ -336,6 +333,52 @@ function renderTodayPanel() {
       <div>Reminder: ${ev.reminderMinutes} min before</div>
     `;
     todayEventsEl.appendChild(item);
+  });
+}
+
+function renderEventsList() {
+  const list = document.getElementById("eventsList");
+  const events = getEvents().sort((a, b) => {
+    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+    return aTime - bTime;
+  });
+
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (events.length === 0) {
+    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
+    return;
+  }
+
+  events.forEach((ev, index) => {
+    const item = document.createElement("div");
+    item.className = "event-item";
+    item.innerHTML = `
+      <p class="event-title">${ev.title}</p>
+      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
+      <div>Reminder: ${ev.reminderMinutes} min before</div>
+      <div class="video-actions" style="margin-top:10px;">
+        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.deleteEvent);
+      const events = getEvents().sort((a, b) => {
+        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+        return aTime - bTime;
+      });
+
+      events.splice(index, 1);
+      setEvents(events);
+      renderCalendar();
+    });
   });
 }
 
@@ -428,52 +471,6 @@ function renderCalendar() {
 
   renderEventsList();
   renderTodayPanel();
-}
-
-function renderEventsList() {
-  const list = document.getElementById("eventsList");
-  const events = getEvents().sort((a, b) => {
-    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-    return aTime - bTime;
-  });
-
-  if (!list) return;
-  list.innerHTML = "";
-
-  if (events.length === 0) {
-    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
-    return;
-  }
-
-  events.forEach((ev, index) => {
-    const item = document.createElement("div");
-    item.className = "event-item";
-    item.innerHTML = `
-      <p class="event-title">${ev.title}</p>
-      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
-      <div>Reminder: ${ev.reminderMinutes} min before</div>
-      <div class="video-actions" style="margin-top:10px;">
-        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-
-  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.deleteEvent);
-      const events = getEvents().sort((a, b) => {
-        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-        return aTime - bTime;
-      });
-
-      events.splice(index, 1);
-      setEvents(events);
-      renderCalendar();
-    });
-  });
 }
 
 function addEvent() {
