@@ -423,3 +423,40 @@ checkReminders();
 
 // start on dashboard
 showPanel("dashboard");
+function getModeByHour(hour) {
+  // Morning: 6 AM - 10:59 AM
+  if (hour >= 6 && hour < 11) return "morning";
+
+  // Day: 11 AM - 5:59 PM
+  if (hour >= 11 && hour < 18) return "day";
+
+  // Night: 6 PM - 5:59 AM
+  return "night";
+}
+
+function applyTimeMode() {
+  const now = new Date();
+  const hour = now.getHours();
+  const mode = getModeByHour(hour);
+
+  document.body.classList.remove("theme-morning", "theme-day", "theme-night");
+  document.body.classList.add(`theme-${mode}`);
+
+  const modeText = document.getElementById("modeText");
+  const modeIcon = document.getElementById("modeIcon");
+
+  if (modeText) {
+    if (mode === "morning") modeText.textContent = "Morning Mode";
+    if (mode === "day") modeText.textContent = "Day Mode";
+    if (mode === "night") modeText.textContent = "Night Mode";
+  }
+
+  if (modeIcon) {
+    if (mode === "morning") modeIcon.textContent = "☀";
+    if (mode === "day") modeIcon.textContent = "◐";
+    if (mode === "night") modeIcon.textContent = "☾";
+  }
+}
+
+applyTimeMode();
+setInterval(applyTimeMode, 60000);
