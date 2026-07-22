@@ -24,8 +24,30 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-function getYouTubeTitle(url) {
-  return url;
+function extractYouTubeId(url) {
+  try {
+    const parsed = new URL(url);
+
+    // youtu.be/VIDEO_ID
+    if (parsed.hostname.includes("youtu.be")) {
+      return parsed.pathname.slice(1);
+    }
+
+    // youtube.com/watch?v=VIDEO_ID
+    if (parsed.hostname.includes("youtube.com")) {
+      return parsed.searchParams.get("v");
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getEmbedUrl(url) {
+  const videoId = extractYouTubeId(url);
+  if (!videoId) return null;
+  return `https://www.youtube.com/embed/${videoId}`;
 }
 
 function loadVideos() {
@@ -40,13 +62,32 @@ function loadVideos() {
   }
 
   videos.forEach((url, index) => {
+    const embedUrl = getEmbedUrl(url);
+
     const div = document.createElement("div");
     div.className = "video-item";
-    div.innerHTML = `
-      <p>${getYouTubeTitle(url)}</p>
-      <a href="${url}" target="_blank">Watch</a>
-      <button onclick="deleteVideo(${index})">Delete</button>
-    `;
+
+    if (!embedUrl) {
+      div.innerHTML = `
+        <p>Invalid YouTube link</p>
+        <button onclick="deleteVideo(${index})">Delete</button>
+      `;
+    } else {
+      div.innerHTML = `
+        <div class="video-frame">
+          <iframe
+            src="${embedUrl}"
+            title="YouTube video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="video-actions">
+          <button onclick="deleteVideo(${index})">Delete</button>
+        </div>
+      `;
+    }
+
     videoList.appendChild(div);
   });
 }
@@ -57,6 +98,12 @@ function saveVideo() {
 
   if (!url) {
     alert("Paste a YouTube link first.");
+    return;
+  }
+
+  const embedUrl = getEmbedUrl(url);
+  if (!embedUrl) {
+    alert("That doesn't look like a valid YouTube link.");
     return;
   }
 
@@ -77,3 +124,18 @@ function deleteVideo(index) {
 
 document.getElementById("saveBtn").addEventListener("click", saveVideo);
 loadVideos();
+.video-frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  margin-bottom: 10px;
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 8px;
+}
