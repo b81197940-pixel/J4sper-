@@ -1,10 +1,40 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>My Website</title>
-  </head>
-  <body>
-    <h1>Hello world</h1>
-    <p>This is my first website.</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Personal Hub</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <h1>My Personal Hub</h1>
+      <p id="date">Loading date...</p>
+      <p id="time">Loading time...</p>
+    </header>
+
+    <section class="card">
+      <h2>Shortcuts</h2>
+      <div class="buttons">
+        <a href="https://www.youtube.com" target="_blank">YouTube</a>
+        <a href="https://open.spotify.com" target="_blank">Spotify</a>
+        <a href="https://calendar.google.com" target="_blank">Calendar</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Save a YouTube Video</h2>
+      <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
+      <button id="saveBtn">Save Video</button>
+    </section>
+
+    <section class="card">
+      <h2>Saved Videos</h2>
+      <div id="videoList"></div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
