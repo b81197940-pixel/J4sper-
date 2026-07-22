@@ -28,12 +28,10 @@ function extractYouTubeId(url) {
   try {
     const parsed = new URL(url);
 
-    // youtu.be/VIDEO_ID
     if (parsed.hostname.includes("youtu.be")) {
       return parsed.pathname.slice(1);
     }
 
-    // youtube.com/watch?v=VIDEO_ID
     if (parsed.hostname.includes("youtube.com")) {
       return parsed.searchParams.get("v");
     }
@@ -50,6 +48,27 @@ function getEmbedUrl(url) {
   return `https://www.youtube.com/embed/${videoId}`;
 }
 
+function playVideo(url) {
+  const embedUrl = getEmbedUrl(url);
+  const playerArea = document.getElementById("playerArea");
+
+  if (!embedUrl) {
+    playerArea.innerHTML = "<p>That is not a valid YouTube link.</p>";
+    return;
+  }
+
+  playerArea.innerHTML = `
+    <div class="video-frame">
+      <iframe
+        src="${embedUrl}"
+        title="YouTube video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+  `;
+}
+
 function loadVideos() {
   const videoList = document.getElementById("videoList");
   const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
@@ -62,33 +81,32 @@ function loadVideos() {
   }
 
   videos.forEach((url, index) => {
-    const embedUrl = getEmbedUrl(url);
-
     const div = document.createElement("div");
     div.className = "video-item";
-
-    if (!embedUrl) {
-      div.innerHTML = `
-        <p>Invalid YouTube link</p>
-        <button onclick="deleteVideo(${index})">Delete</button>
-      `;
-    } else {
-      div.innerHTML = `
-        <div class="video-frame">
-          <iframe
-            src="${embedUrl}"
-            title="YouTube video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-actions">
-          <button onclick="deleteVideo(${index})">Delete</button>
-        </div>
-      `;
-    }
-
+    div.innerHTML = `
+      <p>YouTube Video ${index + 1}</p>
+      <div class="video-actions">
+        <button data-action="play" data-index="${index}">Watch</button>
+        <button data-action="delete" data-index="${index}">Delete</button>
+      </div>
+    `;
     videoList.appendChild(div);
+  });
+
+  videoList.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.index);
+      const action = btn.dataset.action;
+      const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
+
+      if (action === "play") {
+        playVideo(videos[index]);
+      } else if (action === "delete") {
+        videos.splice(index, 1);
+        localStorage.setItem("savedVideos", JSON.stringify(videos));
+        loadVideos();
+      }
+    });
   });
 }
 
@@ -101,8 +119,7 @@ function saveVideo() {
     return;
   }
 
-  const embedUrl = getEmbedUrl(url);
-  if (!embedUrl) {
+  if (!getEmbedUrl(url)) {
     alert("That doesn't look like a valid YouTube link.");
     return;
   }
@@ -115,27 +132,5 @@ function saveVideo() {
   loadVideos();
 }
 
-function deleteVideo(index) {
-  const videos = JSON.parse(localStorage.getItem("savedVideos")) || [];
-  videos.splice(index, 1);
-  localStorage.setItem("savedVideos", JSON.stringify(videos));
-  loadVideos();
-}
-
 document.getElementById("saveBtn").addEventListener("click", saveVideo);
 loadVideos();
-.video-frame {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  margin-bottom: 10px;
-}
-
-.video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 8px;
-}
