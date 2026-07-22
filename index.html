@@ -3,45 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Personal Hub</title>
+  <title>JARVIS Hub</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <header class="top">
-      <h1>My Personal Hub</h1>
-      <p id="date"></p>
-      <p id="time"></p>
+  <div class="bg-grid"></div>
+  <div class="scanlines"></div>
+  <div class="glow-orb glow-1"></div>
+  <div class="glow-orb glow-2"></div>
+
+  <main class="shell">
+    <header class="hero">
+      <div class="hero-title">JARVIS HUB</div>
+      <div class="hero-subtitle">Personal command interface</div>
+      <div class="datetime">
+        <span id="date">Loading date...</span>
+        <span class="dot"></span>
+        <span id="time">Loading time...</span>
+      </div>
     </header>
 
-    <section class="card">
-      <h2>Shortcuts</h2>
-      <div class="buttons">
-        <a href="https://www.youtube.com" target="_blank">YouTube</a>
-        <a href="https://open.spotify.com" target="_blank">Spotify</a>
-        <a href="https://calendar.google.com" target="_blank">Calendar</a>
+    <section class="panel">
+      <div class="panel-title">Shortcuts</div>
+      <div class="button-row">
+        <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
+        <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
+        <a class="neo-btn" href="https://calendar.google.com" target="_blank" rel="noopener">Calendar</a>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Save a YouTube Video</h2>
-      <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
-      <button id="saveBtn">Save Video</button>
-      <p id="status"></p>
+    <section class="panel">
+      <div class="panel-title">Save YouTube Link</div>
+      <div class="input-row">
+        <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
+        <button id="saveBtn" class="neo-btn">Save Video</button>
+      </div>
+      <div id="status" class="status">Ready.</div>
     </section>
 
-    <section class="card">
-      <h2>Watch Video</h2>
-      <div id="playerArea">
-        <p>No video selected yet.</p>
+    <section class="panel">
+      <div class="panel-title">Now Playing</div>
+      <div id="playerArea" class="player-area">
+        <div class="empty-state">No video selected.</div>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Saved Videos</h2>
-      <div id="videoList"></div>
+    <section class="panel">
+      <div class="panel-title">Saved Videos</div>
+      <div id="videoList" class="video-list"></div>
     </section>
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
