@@ -18,31 +18,12 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-function extractYouTubeId(url) {
-  try {
-    const parsed = new URL(url);
-
-    if (parsed.hostname.includes("youtu.be")) {
-      return parsed.pathname.slice(1);
-    }
-
-    if (parsed.hostname.includes("youtube.com")) {
-      return parsed.searchParams.get("v");
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function getEmbedUrl(url) {
-  const videoId = extractYouTubeId(url);
-  return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-}
-
 function getVideos() {
-  return JSON.parse(localStorage.getItem("savedVideos") || "[]");
+  try {
+    return JSON.parse(localStorage.getItem("savedVideos") || "[]");
+  } catch {
+    return [];
+  }
 }
 
 function setVideos(videos) {
@@ -53,25 +34,60 @@ function showStatus(message) {
   document.getElementById("status").textContent = message;
 }
 
-function playVideo(url) {
-  const embedUrl = getEmbedUrl(url);
-  const playerArea = document.getElementById("playerArea");
+function normalizeYouTubeUrl(input) {
+  try {
+    const url = new URL(input.trim());
 
+    if (url.hostname.includes("youtu.be")) {
+      const id = url.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+    }
+
+    if (url.hostname.includes("youtube.com")) {
+      const videoId = url.searchParams.get("v");
+      if (videoId) {
+        return `https://www.youtube-nocookie.com/embed/${videoId}`;
+      }
+
+      // handle shorts
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      if (pathParts[0] === "shorts" && pathParts[1]) {
+        return `https://www.youtube-nocookie.com/embed/${pathParts[1]}`;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function renderPlayer(embedUrl, label = "Playing now") {
+  const playerArea = document.getElementById("playerArea");
+  playerArea.innerHTML = `
+    <div class="video-item">
+      <p class="video-item-title">${label}</p>
+      <div class="video-frame">
+        <iframe
+          src="${embedUrl}"
+          title="YouTube video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  `;
+}
+
+function playVideo(url) {
+  const embedUrl = normalizeYouTubeUrl(url);
   if (!embedUrl) {
-    playerArea.innerHTML = "<p>That is not a valid YouTube link.</p>";
+    showStatus("That does not look like a valid YouTube link.");
     return;
   }
 
-  playerArea.innerHTML = `
-    <div class="video-frame">
-      <iframe
-        src="${embedUrl}"
-        title="YouTube video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
-    </div>
-  `;
+  renderPlayer(embedUrl);
+  showStatus("Video loaded.");
 }
 
 function loadVideos() {
@@ -81,20 +97,22 @@ function loadVideos() {
   videoList.innerHTML = "";
 
   if (videos.length === 0) {
-    videoList.innerHTML = "<p>No saved videos yet.</p>";
+    videoList.innerHTML = `<div class="empty-state">No saved videos yet.</div>`;
     return;
   }
 
   videos.forEach((url, index) => {
     const item = document.createElement("div");
     item.className = "video-item";
+
     item.innerHTML = `
-      <p>Saved video ${index + 1}</p>
+      <p class="video-item-title">${url}</p>
       <div class="video-actions">
-        <button data-action="play" data-index="${index}">Watch</button>
-        <button data-action="delete" data-index="${index}">Delete</button>
+        <button class="neo-btn" data-action="play" data-index="${index}">Watch</button>
+        <button class="neo-btn" data-action="delete" data-index="${index}">Delete</button>
       </div>
     `;
+
     videoList.appendChild(item);
   });
 
@@ -127,7 +145,8 @@ function saveVideo() {
     return;
   }
 
-  if (!getEmbedUrl(url)) {
+  const embedUrl = normalizeYouTubeUrl(url);
+  if (!embedUrl) {
     showStatus("That does not look like a valid YouTube link.");
     return;
   }
@@ -142,5 +161,10 @@ function saveVideo() {
 }
 
 document.getElementById("saveBtn").addEventListener("click", saveVideo);
+
+document.getElementById("videoUrl").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") saveVideo();
+});
+
 loadVideos();
 showStatus("Ready.");
