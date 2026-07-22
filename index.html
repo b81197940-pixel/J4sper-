@@ -32,49 +32,19 @@
           <span class="nav-label">Main</span>
         </button>
 
-        <button class="nav-item" data-panel="dashboard" type="button">
-          <span class="nav-icon">▣</span>
-          <span class="nav-label">Dashboard</span>
-        </button>
-
-        <button class="nav-item" data-panel="talk" type="button">
-          <span class="nav-icon">◌</span>
-          <span class="nav-label">Talk to JARVIS</span>
-        </button>
-
         <button class="nav-item" data-panel="shortcuts" type="button">
           <span class="nav-icon">↗</span>
           <span class="nav-label">Shortcuts</span>
         </button>
 
-        <button class="nav-item" data-panel="media" type="button">
-          <span class="nav-icon">♫</span>
-          <span class="nav-label">Media</span>
-        </button>
-
         <button class="nav-item" data-panel="tube" type="button">
           <span class="nav-icon">▶</span>
-          <span class="nav-label">Tube</span>
-        </button>
-
-        <button class="nav-item" data-panel="today" type="button">
-          <span class="nav-icon">☼</span>
-          <span class="nav-label">Today</span>
+          <span class="nav-label">Saved Videos</span>
         </button>
 
         <button class="nav-item" data-panel="calendar" type="button">
           <span class="nav-icon">🗓</span>
           <span class="nav-label">Calendar</span>
-        </button>
-
-        <button class="nav-item" data-panel="settings" type="button">
-          <span class="nav-icon">⚙</span>
-          <span class="nav-label">Settings</span>
-        </button>
-
-        <button class="nav-item" data-panel="customization" type="button">
-          <span class="nav-icon">◐</span>
-          <span class="nav-label">Customization</span>
         </button>
       </nav>
 
@@ -114,46 +84,57 @@
         </div>
       </section>
 
-      <section class="panel" id="dashboard-panel">
-        <div class="panel-title">Dashboard</div>
-        <div class="mini-grid">
-          <div class="mini-card">
-            <div class="mini-label">Mode</div>
-            <div class="mini-value" id="dashboardMode">Auto</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">Status</div>
-            <div class="mini-value">Online</div>
-          </div>
-        </div>
-        <p class="muted">Use the sidebar to open Tube, Calendar, Shortcuts, and Today.</p>
-      </section>
-
-      <section class="panel" id="talk-panel">
-        <div class="panel-title">Talk to JARVIS</div>
-        <div class="mini-card">
-          <div class="mini-label">Coming soon</div>
-          <div class="mini-value">AI chat later</div>
-        </div>
-        <p class="muted">This section is ready for your future chatbot.</p>
-      </section>
-
       <section class="panel" id="shortcuts-panel">
         <div class="panel-title">Shortcuts</div>
-        <div class="button-row">
-          <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
-          <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
-          <button class="neo-btn shortcut-btn" data-panel="calendar" type="button">Calendar</button>
-        </div>
-      </section>
 
-      <section class="panel" id="media-panel">
-        <div class="panel-title">Media</div>
-        <div class="mini-card">
-          <div class="mini-label">Media Hub</div>
-          <div class="mini-value">Ready</div>
+        <div class="wheel-wrap">
+          <div class="wheel-hint">Spin the wheel or click an app</div>
+
+          <div class="wheel-stage" id="shortcutWheel">
+            <div class="wheel-ring"></div>
+
+            <button class="wheel-item" type="button" data-index="0" style="--index:0">
+              <span class="wheel-item-icon">▶</span>
+              <span class="wheel-item-label">YouTube</span>
+            </button>
+
+            <button class="wheel-item" type="button" data-index="1" style="--index:1">
+              <span class="wheel-item-icon">♫</span>
+              <span class="wheel-item-label">Spotify</span>
+            </button>
+
+            <button class="wheel-item" type="button" data-index="2" style="--index:2">
+              <span class="wheel-item-icon">⌂</span>
+              <span class="wheel-item-label">Browser</span>
+            </button>
+
+            <button class="wheel-item" type="button" data-index="3" style="--index:3">
+              <span class="wheel-item-icon">B</span>
+              <span class="wheel-item-label">Bing</span>
+            </button>
+
+            <button class="wheel-item" type="button" data-index="4" style="--index:4">
+              <span class="wheel-item-icon">D</span>
+              <span class="wheel-item-label">Drive</span>
+            </button>
+
+            <button class="wheel-item" type="button" data-index="5" style="--index:5">
+              <span class="wheel-item-icon">@</span>
+              <span class="wheel-item-label">Gmail</span>
+            </button>
+
+            <button class="wheel-center" id="shortcutOpenBtn" type="button">
+              <span id="shortcutActiveIcon">▶</span>
+              <strong id="shortcutActiveLabel">YouTube</strong>
+              <small id="shortcutActiveHint">Open selected</small>
+            </button>
+          </div>
+
+          <div class="wheel-controls">
+            <button id="shortcutPrev" class="neo-btn" type="button">Prev</button>
+            <button id="shortcutNext" class="neo-btn" type="button">Next</button>
+          </div>
         </div>
-        <p class="muted">This area can later hold music, video, or audio controls.</p>
       </section>
 
       <section class="panel" id="tube-panel">
@@ -176,25 +157,6 @@
         <div class="subsection">
           <div class="panel-title">Saved Videos</div>
           <div id="videoList" class="list"></div>
-        </div>
-      </section>
-
-      <section class="panel" id="today-panel">
-        <div class="panel-title">Today</div>
-        <div class="mini-grid">
-          <div class="mini-card">
-            <div class="mini-label">Today’s Events</div>
-            <div class="mini-value" id="todayCount">0</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">Day Mode</div>
-            <div class="mini-value" id="todayMode">Auto</div>
-          </div>
-        </div>
-
-        <div class="subsection">
-          <div class="panel-title">Today’s Schedule</div>
-          <div id="todayEvents" class="list"></div>
         </div>
       </section>
 
@@ -222,30 +184,6 @@
           <div class="panel-title">Saved Events</div>
           <div id="eventsList" class="list"></div>
         </div>
-      </section>
-
-      <section class="panel" id="settings-panel">
-        <div class="panel-title">Settings</div>
-        <div class="mini-grid">
-          <div class="mini-card">
-            <div class="mini-label">Mode</div>
-            <div class="mini-value" id="settingsMode">Auto</div>
-          </div>
-          <div class="mini-card">
-            <div class="mini-label">Theme</div>
-            <div class="mini-value">JARVIS</div>
-          </div>
-        </div>
-        <p class="muted">Auto day/night mode is always active.</p>
-      </section>
-
-      <section class="panel" id="customization-panel">
-        <div class="panel-title">Customization</div>
-        <div class="mini-card">
-          <div class="mini-label">Future controls</div>
-          <div class="mini-value">Themes</div>
-        </div>
-        <p class="muted">This section is ready for future color, layout, and HUD controls.</p>
       </section>
     </main>
   </div>
