@@ -12,6 +12,30 @@
   <div class="glow-orb glow-1"></div>
   <div class="glow-orb glow-2"></div>
 
+  <aside class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+
+    <button class="nav-item active" data-panel="dashboard">
+      <span class="icon">⌂</span>
+      <span class="label">Dashboard</span>
+    </button>
+
+    <button class="nav-item" data-panel="shortcuts">
+      <span class="icon">↗</span>
+      <span class="label">Shortcuts</span>
+    </button>
+
+    <button class="nav-item" data-panel="youtube">
+      <span class="icon">▶</span>
+      <span class="label">Saved Videos</span>
+    </button>
+
+    <button class="nav-item" data-panel="calendar">
+      <span class="icon">🗓</span>
+      <span class="label">Calendar</span>
+    </button>
+  </aside>
+
   <main class="shell">
     <header class="hero">
       <div class="hero-title">JARVIS HUB</div>
@@ -23,7 +47,22 @@
       </div>
     </header>
 
-    <section class="panel">
+    <section class="panel active" id="dashboard-panel">
+      <div class="panel-title">Overview</div>
+      <div class="dashboard-grid">
+        <div class="mini-card">
+          <div class="mini-label">Videos</div>
+          <div class="mini-value" id="videoCount">0</div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-label">Events</div>
+          <div class="mini-value" id="eventCount">0</div>
+        </div>
+      </div>
+      <div class="empty-state">Use the sidebar icons to open each section.</div>
+    </section>
+
+    <section class="panel" id="shortcuts-panel">
       <div class="panel-title">Shortcuts</div>
       <div class="button-row">
         <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
@@ -32,23 +71,28 @@
       </div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="youtube-panel">
       <div class="panel-title">Save YouTube Link</div>
       <div class="input-row">
         <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
         <button id="saveBtn" class="neo-btn">Save Video</button>
       </div>
       <div id="status" class="status">Ready.</div>
-    </section>
 
-    <section class="panel">
-      <div class="panel-title">Now Playing</div>
-      <div id="playerArea" class="player-area">
-        <div class="empty-state">No video selected.</div>
+      <div class="subpanel">
+        <div class="panel-title">Now Playing</div>
+        <div id="playerArea" class="player-area">
+          <div class="empty-state">No video selected.</div>
+        </div>
+      </div>
+
+      <div class="subpanel">
+        <div class="panel-title">Saved Videos</div>
+        <div id="videoList" class="video-list"></div>
       </div>
     </section>
 
-    <section class="panel" id="calendar">
+    <section class="panel" id="calendar-panel">
       <div class="panel-title">Calendar</div>
 
       <div class="calendar-topbar">
@@ -72,11 +116,6 @@
         <h3>Saved Events</h3>
         <div id="eventsList"></div>
       </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-title">Saved Videos</div>
-      <div id="videoList" class="video-list"></div>
     </section>
   </main>
 
