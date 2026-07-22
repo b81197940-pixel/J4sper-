@@ -9,115 +9,158 @@
 <body>
   <div class="bg-grid"></div>
   <div class="scanlines"></div>
-  <div class="glow-orb glow-1"></div>
-  <div class="glow-orb glow-2"></div>
 
-  <aside class="sidebar" id="sidebar">
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
-
-    <button class="nav-item active" data-panel="dashboard">
-      <span class="icon">⌂</span>
-      <span class="label">Dashboard</span>
-    </button>
-
-    <button class="nav-item" data-panel="shortcuts">
-      <span class="icon">↗</span>
-      <span class="label">Shortcuts</span>
-    </button>
-
-    <button class="nav-item" data-panel="youtube">
-      <span class="icon">▶</span>
-      <span class="label">Saved Videos</span>
-    </button>
-
-    <button class="nav-item" data-panel="calendar">
-      <span class="icon">🗓</span>
-      <span class="label">Calendar</span>
-    </button>
-  </aside>
-
-  <main class="shell">
-    <header class="hero">
-      <div class="hero-title">JARVIS HUB</div>
-      <div class="hero-subtitle">Personal command interface</div>
-      <div class="datetime">
-        <span id="date">Loading date...</span>
-        <span class="dot"></span>
-        <span id="time">Loading time...</span>
-      </div>
-    </header>
-
-    <section class="panel active" id="dashboard-panel">
-      <div class="panel-title">Overview</div>
-      <div class="dashboard-grid">
-        <div class="mini-card">
-          <div class="mini-label">Videos</div>
-          <div class="mini-value" id="videoCount">0</div>
-        </div>
-        <div class="mini-card">
-          <div class="mini-label">Events</div>
-          <div class="mini-value" id="eventCount">0</div>
-        </div>
-      </div>
-      <div class="empty-state">Use the sidebar icons to open each section.</div>
-    </section>
-
-    <section class="panel" id="shortcuts-panel">
-      <div class="panel-title">Shortcuts</div>
-      <div class="button-row">
-        <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
-        <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
-        <a class="neo-btn" href="#calendar">Calendar</a>
-      </div>
-    </section>
-
-    <section class="panel" id="youtube-panel">
-      <div class="panel-title">Save YouTube Link</div>
-      <div class="input-row">
-        <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
-        <button id="saveBtn" class="neo-btn">Save Video</button>
-      </div>
-      <div id="status" class="status">Ready.</div>
-
-      <div class="subpanel">
-        <div class="panel-title">Now Playing</div>
-        <div id="playerArea" class="player-area">
-          <div class="empty-state">No video selected.</div>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-title">JARVIS</div>
+          <div class="brand-subtitle">STARK OS</div>
         </div>
       </div>
 
-      <div class="subpanel">
-        <div class="panel-title">Saved Videos</div>
-        <div id="videoList" class="video-list"></div>
-      </div>
-    </section>
+      <nav class="nav">
+        <button class="nav-item active" data-panel="main">
+          <span class="nav-icon">⌂</span>
+          <span>Main</span>
+          <span class="nav-arrow">‹</span>
+        </button>
 
-    <section class="panel" id="calendar-panel">
-      <div class="panel-title">Calendar</div>
+        <button class="nav-item" data-panel="dashboard">
+          <span class="nav-icon">☷</span>
+          <span>Dashboard</span>
+        </button>
 
-      <div class="calendar-topbar">
-        <button id="prevMonth" class="neo-btn">←</button>
-        <div id="monthLabel" class="month-label">Month</div>
-        <button id="nextMonth" class="neo-btn">→</button>
-      </div>
+        <button class="nav-item" data-panel="tube">
+          <span class="nav-icon">▶</span>
+          <span>Tube</span>
+        </button>
 
-      <div id="calendarGrid" class="calendar-grid"></div>
+        <button class="nav-item" data-panel="shortcuts">
+          <span class="nav-icon">↗</span>
+          <span>Shortcuts</span>
+        </button>
 
-      <div class="calendar-form">
-        <h3>Add Event</h3>
-        <input id="eventTitle" type="text" placeholder="Event title" />
-        <input id="eventDate" type="date" />
-        <input id="eventTime" type="time" />
-        <input id="reminderMinutes" type="number" min="0" value="10" placeholder="Reminder minutes before" />
-        <button id="addEventBtn" class="neo-btn">Add Event</button>
-      </div>
+        <button class="nav-item" data-panel="calendar">
+          <span class="nav-icon">📅</span>
+          <span>Calendar</span>
+        </button>
 
-      <div class="calendar-events">
-        <h3>Saved Events</h3>
-        <div id="eventsList"></div>
-      </div>
-    </section>
-  </main>
+        <button class="nav-item" data-panel="settings">
+          <span class="nav-icon">⚙</span>
+          <span>Settings</span>
+        </button>
+
+        <button class="nav-item" data-panel="customization">
+          <span class="nav-icon">◌</span>
+          <span>Customization</span>
+        </button>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <div class="datetime">
+          <span id="date">Loading date...</span>
+          <span class="dot"></span>
+          <span id="time">Loading time...</span>
+        </div>
+      </header>
+
+      <section class="panel active" id="main-panel">
+        <div class="panel-title">Main</div>
+        <div class="hero-card">
+          <h1>JARVIS HUB</h1>
+          <p>Personal command interface</p>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Videos</div>
+            <div class="stat-value" id="videoCount">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Events</div>
+            <div class="stat-value" id="eventCount">0</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="dashboard-panel">
+        <div class="panel-title">Dashboard</div>
+        <p class="muted">Use the sidebar to open Tube, Calendar, and Shortcuts.</p>
+      </section>
+
+      <section class="panel" id="tube-panel">
+        <div class="panel-title">Tube</div>
+
+        <div class="input-row">
+          <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
+          <button id="saveBtn" class="neo-btn">Save Video</button>
+        </div>
+
+        <div id="status" class="status">Ready.</div>
+
+        <div class="subsection">
+          <div class="panel-title">Now Playing</div>
+          <div id="playerArea" class="player-area">
+            <div class="empty-state">No video selected.</div>
+          </div>
+        </div>
+
+        <div class="subsection">
+          <div class="panel-title">Saved Videos</div>
+          <div id="videoList" class="list"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="shortcuts-panel">
+        <div class="panel-title">Shortcuts</div>
+        <div class="button-row">
+          <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
+          <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
+          <a class="neo-btn" href="#calendar-panel">Calendar</a>
+        </div>
+      </section>
+
+      <section class="panel" id="calendar-panel">
+        <div class="panel-title">Calendar</div>
+
+        <div class="calendar-topbar">
+          <button id="prevMonth" class="neo-btn">←</button>
+          <div id="monthLabel" class="month-label">Month</div>
+          <button id="nextMonth" class="neo-btn">→</button>
+        </div>
+
+        <div id="calendarGrid" class="calendar-grid"></div>
+
+        <div class="calendar-form">
+          <h3>Add Event</h3>
+          <input id="eventTitle" type="text" placeholder="Event title" />
+          <input id="eventDate" type="date" />
+          <input id="eventTime" type="time" />
+          <input id="reminderMinutes" type="number" min="0" value="10" placeholder="Reminder minutes before" />
+          <button id="addEventBtn" class="neo-btn">Add Event</button>
+        </div>
+
+        <div class="subsection">
+          <div class="panel-title">Saved Events</div>
+          <div id="eventsList" class="list"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="settings-panel">
+        <div class="panel-title">Settings</div>
+        <p class="muted">Placeholder for future controls.</p>
+      </section>
+
+      <section class="panel" id="customization-panel">
+        <div class="panel-title">Customization</div>
+        <p class="muted">Placeholder for themes and layout changes.</p>
+      </section>
+    </main>
+  </div>
 
   <script src="script.js"></script>
 </body>
