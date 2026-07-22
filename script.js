@@ -1,7 +1,6 @@
 const sidebar = document.getElementById("sidebar");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const navItems = document.querySelectorAll(".nav-item");
-const shortcutButtons = document.querySelectorAll(".shortcut-btn");
 
 const panels = {
   home: document.getElementById("home-panel"),
@@ -30,19 +29,12 @@ document.querySelector(".nav").addEventListener("click", (e) => {
   showPanel(btn.dataset.panel);
 });
 
-shortcutButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const panel = btn.dataset.panel;
-    if (panel) showPanel(panel);
-  });
-});
-
 sidebarToggle.addEventListener("click", () => {
   sidebar.classList.toggle("collapsed");
   sidebarToggle.textContent = sidebar.classList.contains("collapsed") ? "⟩" : "⟨";
 });
 
-// Date and time
+// Date/time
 function updateDateTime() {
   const now = new Date();
 
@@ -63,7 +55,7 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// Day / night mode
+// Day/night mode
 function getModeByHour(hour) {
   if (hour >= 6 && hour < 11) return "morning";
   if (hour >= 11 && hour < 18) return "day";
@@ -80,19 +72,16 @@ function applyTimeMode() {
   const modeText = document.getElementById("modeText");
   const modeIcon = document.getElementById("modeIcon");
 
-  let label = "Day Mode";
-  let icon = "◐";
-
   if (mode === "morning") {
-    label = "Morning Mode";
-    icon = "☀";
-  } else if (mode === "night") {
-    label = "Night Mode";
-    icon = "☾";
+    if (modeText) modeText.textContent = "Morning Mode";
+    if (modeIcon) modeIcon.textContent = "☀";
+  } else if (mode === "day") {
+    if (modeText) modeText.textContent = "Day Mode";
+    if (modeIcon) modeIcon.textContent = "◐";
+  } else {
+    if (modeText) modeText.textContent = "Night Mode";
+    if (modeIcon) modeIcon.textContent = "☾";
   }
-
-  if (modeText) modeText.textContent = label;
-  if (modeIcon) modeIcon.textContent = icon;
 }
 
 applyTimeMode();
@@ -115,6 +104,8 @@ const shortcutOpenBtn = document.getElementById("shortcutOpenBtn");
 const shortcutActiveLabel = document.getElementById("shortcutActiveLabel");
 const shortcutActiveHint = document.getElementById("shortcutActiveHint");
 const shortcutActiveIcon = document.getElementById("shortcutActiveIcon");
+const shortcutPrev = document.getElementById("shortcutPrev");
+const shortcutNext = document.getElementById("shortcutNext");
 
 function renderShortcutWheel() {
   const items = document.querySelectorAll(".wheel-item");
@@ -150,41 +141,30 @@ document.querySelectorAll(".wheel-item").forEach((btn) => {
   });
 });
 
-if (shortcutOpenBtn) {
-  shortcutOpenBtn.addEventListener("click", () => {
-    openShortcut(selectedShortcut);
-  });
-}
+shortcutOpenBtn.addEventListener("click", () => {
+  openShortcut(selectedShortcut);
+});
 
-const shortcutPrev = document.getElementById("shortcutPrev");
-const shortcutNext = document.getElementById("shortcutNext");
+shortcutPrev.addEventListener("click", () => {
+  selectShortcut(selectedShortcut - 1);
+});
 
-if (shortcutPrev) {
-  shortcutPrev.addEventListener("click", () => {
-    selectShortcut(selectedShortcut - 1);
-  });
-}
+shortcutNext.addEventListener("click", () => {
+  selectShortcut(selectedShortcut + 1);
+});
 
-if (shortcutNext) {
-  shortcutNext.addEventListener("click", () => {
-    selectShortcut(selectedShortcut + 1);
-  });
-}
-
-if (shortcutWheel) {
-  shortcutWheel.addEventListener(
-    "wheel",
-    (e) => {
-      e.preventDefault();
-      if (e.deltaY > 0) {
-        selectShortcut(selectedShortcut + 1);
-      } else {
-        selectShortcut(selectedShortcut - 1);
-      }
-    },
-    { passive: false }
-  );
-}
+shortcutWheel.addEventListener(
+  "wheel",
+  (e) => {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      selectShortcut(selectedShortcut + 1);
+    } else {
+      selectShortcut(selectedShortcut - 1);
+    }
+  },
+  { passive: false }
+);
 
 renderShortcutWheel();
 
@@ -227,15 +207,11 @@ function normalizeYouTubeUrl(input) {
 }
 
 function showStatus(message) {
-  const status = document.getElementById("status");
-  if (status) status.textContent = message;
+  document.getElementById("status").textContent = message;
 }
 
 function renderPlayer(embedUrl, label = "Playing now") {
-  const playerArea = document.getElementById("playerArea");
-  if (!playerArea) return;
-
-  playerArea.innerHTML = `
+  document.getElementById("playerArea").innerHTML = `
     <div class="video-item">
       <p class="video-item-title">${label}</p>
       <div class="video-frame">
@@ -264,11 +240,8 @@ function playVideo(url) {
 function loadVideos() {
   const videoList = document.getElementById("videoList");
   const videos = getVideos();
-  const videoCount = document.getElementById("videoCount");
 
-  if (videoCount) videoCount.textContent = String(videos.length);
-
-  if (!videoList) return;
+  document.getElementById("videoCount").textContent = String(videos.length);
   videoList.innerHTML = "";
 
   if (videos.length === 0) {
@@ -314,8 +287,6 @@ function loadVideos() {
 
 function saveVideo() {
   const input = document.getElementById("videoUrl");
-  if (!input) return;
-
   const url = input.value.trim();
 
   if (!url) {
@@ -337,15 +308,10 @@ function saveVideo() {
   showStatus("Video saved.");
 }
 
-const saveBtn = document.getElementById("saveBtn");
-if (saveBtn) saveBtn.addEventListener("click", saveVideo);
-
-const videoUrl = document.getElementById("videoUrl");
-if (videoUrl) {
-  videoUrl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") saveVideo();
-  });
-}
+document.getElementById("saveBtn").addEventListener("click", saveVideo);
+document.getElementById("videoUrl").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") saveVideo();
+});
 
 loadVideos();
 
@@ -376,13 +342,62 @@ function dateKey(dateObj) {
   return `${y}-${m}-${d}`;
 }
 
+function renderTodayPanel() {
+  // not used in this compact version
+}
+
+function renderEventsList() {
+  const list = document.getElementById("eventsList");
+  const events = getEvents().sort((a, b) => {
+    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+    return aTime - bTime;
+  });
+
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (events.length === 0) {
+    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
+    return;
+  }
+
+  events.forEach((ev, index) => {
+    const item = document.createElement("div");
+    item.className = "event-item";
+    item.innerHTML = `
+      <p class="event-title">${ev.title}</p>
+      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
+      <div>Reminder: ${ev.reminderMinutes} min before</div>
+      <div class="video-actions" style="margin-top:10px;">
+        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.deleteEvent);
+      const events = getEvents().sort((a, b) => {
+        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+        return aTime - bTime;
+      });
+
+      events.splice(index, 1);
+      setEvents(events);
+      renderCalendar();
+    });
+  });
+}
+
 function renderCalendar() {
   const grid = document.getElementById("calendarGrid");
   const monthLabel = document.getElementById("monthLabel");
   const events = getEvents();
 
-  const eventCountEl = document.getElementById("eventCount");
-  if (eventCountEl) eventCountEl.textContent = String(events.length);
+  document.getElementById("eventCount").textContent = String(events.length);
 
   if (!grid || !monthLabel) return;
 
@@ -466,52 +481,6 @@ function renderCalendar() {
   renderEventsList();
 }
 
-function renderEventsList() {
-  const list = document.getElementById("eventsList");
-  const events = getEvents().sort((a, b) => {
-    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-    return aTime - bTime;
-  });
-
-  if (!list) return;
-  list.innerHTML = "";
-
-  if (events.length === 0) {
-    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
-    return;
-  }
-
-  events.forEach((ev, index) => {
-    const item = document.createElement("div");
-    item.className = "event-item";
-    item.innerHTML = `
-      <p class="event-title">${ev.title}</p>
-      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
-      <div>Reminder: ${ev.reminderMinutes} min before</div>
-      <div class="video-actions" style="margin-top:10px;">
-        <button class="neo-btn" data-delete-event="${index}" type="button">Delete</button>
-      </div>
-    `;
-    list.appendChild(item);
-  });
-
-  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const index = Number(btn.dataset.deleteEvent);
-      const events = getEvents().sort((a, b) => {
-        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
-        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
-        return aTime - bTime;
-      });
-
-      events.splice(index, 1);
-      setEvents(events);
-      renderCalendar();
-    });
-  });
-}
-
 function addEvent() {
   const title = document.getElementById("eventTitle")?.value.trim();
   const date = document.getElementById("eventDate")?.value;
@@ -539,32 +508,25 @@ function addEvent() {
   renderCalendar();
 }
 
-const addEventBtn = document.getElementById("addEventBtn");
-if (addEventBtn) addEventBtn.addEventListener("click", addEvent);
+document.getElementById("addEventBtn").addEventListener("click", addEvent);
 
-const prevMonth = document.getElementById("prevMonth");
-if (prevMonth) {
-  prevMonth.addEventListener("click", () => {
-    currentMonth--;
-    if (currentMonth < 0) {
-      currentMonth = 11;
-      currentYear--;
-    }
-    renderCalendar();
-  });
-}
+document.getElementById("prevMonth").addEventListener("click", () => {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+  renderCalendar();
+});
 
-const nextMonth = document.getElementById("nextMonth");
-if (nextMonth) {
-  nextMonth.addEventListener("click", () => {
-    currentMonth++;
-    if (currentMonth > 11) {
-      currentMonth = 0;
-      currentYear++;
-    }
-    renderCalendar();
-  });
-}
+document.getElementById("nextMonth").addEventListener("click", () => {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+  renderCalendar();
+});
 
 renderCalendar();
 showPanel("home");
