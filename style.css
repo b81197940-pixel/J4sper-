@@ -44,6 +44,13 @@ body {
   transition: filter 0.8s ease, background 0.8s ease;
 }
 
+.bg-grid,
+.scanlines,
+.glow-orb {
+  pointer-events: none;
+  z-index: 0;
+}
+
 .bg-grid {
   position: fixed;
   inset: 0;
@@ -53,8 +60,6 @@ body {
   background-size: 60px 60px;
   opacity: 0.14;
   animation: gridMove 16s linear infinite;
-  pointer-events: none;
-  z-index: 0;
 }
 
 @keyframes gridMove {
@@ -74,8 +79,6 @@ body {
   background-size: 100% 6px;
   opacity: 0.09;
   animation: scan 8s linear infinite;
-  pointer-events: none;
-  z-index: 0;
 }
 
 @keyframes scan {
@@ -90,8 +93,6 @@ body {
   border-radius: 50%;
   filter: blur(50px);
   opacity: 0.20;
-  pointer-events: none;
-  z-index: 0;
 }
 
 .glow-1 {
@@ -120,7 +121,7 @@ body {
   z-index: 1;
 }
 
-/* Sidebar */
+/* sidebar */
 .sidebar {
   width: var(--sidebar-width);
   background: linear-gradient(180deg, rgba(4,8,14,0.99), rgba(7,10,16,0.96));
@@ -308,7 +309,7 @@ body {
   white-space: nowrap;
 }
 
-/* Content */
+/* content */
 .content {
   flex: 1;
   padding: 22px 24px;
@@ -345,7 +346,7 @@ body {
   box-shadow: 0 0 12px var(--cyan);
 }
 
-/* Panels */
+/* panels */
 .panel {
   display: none;
   max-width: 980px;
@@ -423,7 +424,9 @@ body {
 }
 
 .stat,
-.mini-card {
+.mini-card,
+.video-item,
+.event-item {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 14px;
@@ -518,14 +521,6 @@ input:focus {
 .list {
   display: grid;
   gap: 12px;
-}
-
-.video-item,
-.event-item {
-  border: 1px solid rgba(93, 244, 255, 0.14);
-  border-radius: 14px;
-  background: rgba(0,0,0,0.3);
-  padding: 14px;
 }
 
 .video-item-title,
