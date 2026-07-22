@@ -1,7 +1,3 @@
-<div class="mode-badge" id="modeBadge">
-  <span id="modeIcon">☀</span>
-  <span id="modeText">Day Mode</span>
-</div>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,54 +9,48 @@
 <body>
   <div class="bg-grid"></div>
   <div class="scanlines"></div>
+  <div class="glow-orb glow-1"></div>
+  <div class="glow-orb glow-2"></div>
 
   <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark"></div>
-        <div>
-          <div class="brand-title">JARVIS</div>
-          <div class="brand-subtitle">STARK OS</div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-mark"></div>
+          <div>
+            <div class="brand-title">JARVIS</div>
+            <div class="brand-subtitle">STARK OS</div>
+          </div>
         </div>
+
+        <button class="sidebar-toggle" id="sidebarToggle" title="Collapse sidebar">⟨</button>
       </div>
 
-      <nav class="nav">
-        <button class="nav-item active" data-panel="main">
+      <div class="nav">
+        <button class="nav-item active" data-panel="home">
           <span class="nav-icon">⌂</span>
-          <span>Main</span>
-          <span class="nav-arrow">‹</span>
+          <span class="nav-label">Home</span>
         </button>
-
-        <button class="nav-item" data-panel="dashboard">
-          <span class="nav-icon">☷</span>
-          <span>Dashboard</span>
-        </button>
-
-        <button class="nav-item" data-panel="tube">
-          <span class="nav-icon">▶</span>
-          <span>Tube</span>
-        </button>
-
         <button class="nav-item" data-panel="shortcuts">
           <span class="nav-icon">↗</span>
-          <span>Shortcuts</span>
+          <span class="nav-label">Shortcuts</span>
         </button>
-
+        <button class="nav-item" data-panel="tube">
+          <span class="nav-icon">▶</span>
+          <span class="nav-label">Saved Videos</span>
+        </button>
         <button class="nav-item" data-panel="calendar">
-          <span class="nav-icon">📅</span>
-          <span>Calendar</span>
+          <span class="nav-icon">🗓</span>
+          <span class="nav-label">Calendar</span>
         </button>
+      </div>
 
-        <button class="nav-item" data-panel="settings">
-          <span class="nav-icon">⚙</span>
-          <span>Settings</span>
-        </button>
-
-        <button class="nav-item" data-panel="customization">
-          <span class="nav-icon">◌</span>
-          <span>Customization</span>
-        </button>
-      </nav>
+      <div class="sidebar-bottom">
+        <div class="mode-badge" id="modeBadge">
+          <span id="modeIcon">☀</span>
+          <span id="modeText">Day Mode</span>
+        </div>
+      </div>
     </aside>
 
     <main class="content">
@@ -72,8 +62,8 @@
         </div>
       </header>
 
-      <section class="panel active" id="main-panel">
-        <div class="panel-title">Main</div>
+      <section class="panel active" id="home-panel">
+        <div class="panel-title">Home</div>
         <div class="hero-card">
           <h1>JARVIS HUB</h1>
           <p>Personal command interface</p>
@@ -91,13 +81,17 @@
         </div>
       </section>
 
-      <section class="panel" id="dashboard-panel">
-        <div class="panel-title">Dashboard</div>
-        <p class="muted">Use the sidebar to open Tube, Calendar, and Shortcuts.</p>
+      <section class="panel" id="shortcuts-panel">
+        <div class="panel-title">Shortcuts</div>
+        <div class="button-row">
+          <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
+          <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
+          <a class="neo-btn" href="#calendar-panel">Calendar</a>
+        </div>
       </section>
 
       <section class="panel" id="tube-panel">
-        <div class="panel-title">Tube</div>
+        <div class="panel-title">YouTube Vault</div>
 
         <div class="input-row">
           <input id="videoUrl" type="text" placeholder="Paste a YouTube link here" />
@@ -116,15 +110,6 @@
         <div class="subsection">
           <div class="panel-title">Saved Videos</div>
           <div id="videoList" class="list"></div>
-        </div>
-      </section>
-
-      <section class="panel" id="shortcuts-panel">
-        <div class="panel-title">Shortcuts</div>
-        <div class="button-row">
-          <a class="neo-btn" href="https://www.youtube.com" target="_blank" rel="noopener">YouTube</a>
-          <a class="neo-btn" href="https://open.spotify.com" target="_blank" rel="noopener">Spotify</a>
-          <a class="neo-btn" href="#calendar-panel">Calendar</a>
         </div>
       </section>
 
@@ -152,16 +137,6 @@
           <div class="panel-title">Saved Events</div>
           <div id="eventsList" class="list"></div>
         </div>
-      </section>
-
-      <section class="panel" id="settings-panel">
-        <div class="panel-title">Settings</div>
-        <p class="muted">Placeholder for future controls.</p>
-      </section>
-
-      <section class="panel" id="customization-panel">
-        <div class="panel-title">Customization</div>
-        <p class="muted">Placeholder for themes and layout changes.</p>
       </section>
     </main>
   </div>
