@@ -1,509 +1,393 @@
-:root {
-  --bg: #030508;
-  --sidebar: rgba(6, 10, 16, 0.96);
-  --panel: rgba(8, 12, 18, 0.94);
-  --line: rgba(93, 244, 255, 0.16);
-  --line-strong: rgba(93, 244, 255, 0.45);
-  --text: #dff9ff;
-  --muted: #7c9cab;
-  --cyan: #5df4ff;
-  --cyan-soft: rgba(93, 244, 255, 0.13);
-  --shadow: 0 0 30px rgba(93, 244, 255, 0.10);
+// Sidebar panels
+const navItems = document.querySelectorAll(".nav-item");
+const panels = {
+  main: document.getElementById("main-panel"),
+  dashboard: document.getElementById("dashboard-panel"),
+  tube: document.getElementById("tube-panel"),
+  shortcuts: document.getElementById("shortcuts-panel"),
+  calendar: document.getElementById("calendar-panel"),
+  settings: document.getElementById("settings-panel"),
+  customization: document.getElementById("customization-panel"),
+};
+
+function showPanel(name) {
+  Object.values(panels).forEach((panel) => panel.classList.remove("active"));
+  if (panels[name]) panels[name].classList.add("active");
+
+  navItems.forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.panel === name);
+  });
 }
 
-* { box-sizing: border-box; }
+navItems.forEach((btn) => {
+  btn.addEventListener("click", () => showPanel(btn.dataset.panel));
+});
 
-html, body {
-  margin: 0;
-  min-height: 100%;
-  background: radial-gradient(circle at top, #081018 0%, #030508 45%, #000 100%);
-  color: var(--text);
-  font-family: Inter, Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
+// Date / time
+function updateDateTime() {
+  const now = new Date();
+
+  document.getElementById("date").textContent = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  document.getElementById("time").textContent = now.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(93, 244, 255, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(93, 244, 255, 0.04) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.15;
-  animation: gridMove 16s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes gridMove {
-  from { background-position: 0 0, 0 0; }
-  to { background-position: 0 60px, 60px 0; }
-}
-
-.scanlines {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.02),
-    rgba(255,255,255,0) 10%,
-    rgba(255,255,255,0.02) 20%
-  );
-  background-size: 100% 6px;
-  opacity: 0.10;
-  animation: scan 8s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes scan {
-  from { transform: translateY(0); }
-  to { transform: translateY(6px); }
-}
-
-.app {
-  display: flex;
-  min-height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-.sidebar {
-  width: 240px;
-  background: linear-gradient(180deg, rgba(4,8,14,0.98), rgba(7,10,16,0.96));
-  border-right: 1px solid var(--line);
-  box-shadow: 0 0 30px rgba(0,0,0,0.45);
-  padding: 14px 10px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 10px 18px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 12px;
-}
-
-.brand-mark {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 0 18px var(--cyan-soft);
-  background: radial-gradient(circle, rgba(93,244,255,0.20), rgba(93,244,255,0.02));
-}
-
-.brand-title {
-  color: var(--cyan);
-  font-size: 0.95rem;
-  letter-spacing: 0.5em;
-}
-
-.brand-subtitle {
-  color: var(--muted);
-  font-size: 0.68rem;
-  letter-spacing: 0.22em;
-  margin-top: 2px;
-}
-
-.nav {
-  display: grid;
-  gap: 8px;
-}
-
-.nav-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: transparent;
-  border: 0;
-  border-radius: 12px;
-  color: var(--text);
-  cursor: pointer;
-  text-align: left;
-  position: relative;
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.nav-item:hover {
-  background: rgba(93, 244, 255, 0.06);
-  transform: translateX(2px);
-}
-
-.nav-item.active {
-  background: linear-gradient(90deg, rgba(93,244,255,0.18), rgba(93,244,255,0.06));
-  box-shadow: 0 0 18px rgba(93,244,255,0.14);
-}
-
-.nav-icon {
-  width: 22px;
-  text-align: center;
-  color: var(--cyan);
-  opacity: 0.95;
-}
-
-.nav-arrow {
-  margin-left: auto;
-  color: var(--cyan);
-  opacity: 0.9;
-}
-
-.content {
-  flex: 1;
-  padding: 22px 24px;
-}
-
-.topbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.datetime {
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 14px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: rgba(8, 12, 18, 0.5);
-  box-shadow: var(--shadow);
-  color: #c8f4ff;
-  flex-wrap: wrap;
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 12px var(--cyan);
-}
-
-.panel {
-  display: none;
-  max-width: 980px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 18px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 16px;
-}
-
-.panel.active { display: block; }
-
-.panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    120deg,
-    transparent 0%,
-    rgba(93, 244, 255, 0.06) 50%,
-    transparent 100%
-  );
-  transform: translateX(-100%);
-  animation: sweep 7s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes sweep {
-  0% { transform: translateX(-100%); }
-  40% { transform: translateX(100%); }
-  100% { transform: translateX(100%); }
-}
-
-.panel-title {
-  font-size: 0.78rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  margin-bottom: 14px;
-}
-
-.hero-card {
-  padding: 18px 0 10px;
-}
-
-.hero-card h1 {
-  margin: 0;
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  color: var(--cyan);
-  text-shadow: 0 0 10px rgba(93,244,255,0.45), 0 0 22px rgba(93,244,255,0.18);
-  letter-spacing: 0.28em;
-}
-
-.hero-card p {
-  margin: 10px 0 0;
-  color: var(--muted);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-size: 0.78rem;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.stat {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
-  background: rgba(0,0,0,0.28);
-}
-
-.stat-label {
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.72rem;
-  margin-bottom: 8px;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--cyan);
-}
-
-.muted {
-  color: var(--muted);
-}
-
-.input-row, .button-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.neo-btn {
-  appearance: none;
-  border: 1px solid rgba(93, 244, 255, 0.35);
-  background: linear-gradient(180deg, rgba(13, 24, 35, 0.96), rgba(6, 10, 14, 0.96));
-  color: var(--text);
-  padding: 11px 15px;
-  border-radius: 12px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-  font-weight: 600;
-}
-
-.neo-btn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(93, 244, 255, 0.9);
-  box-shadow: 0 0 18px rgba(93, 244, 255, 0.16);
-}
-
-input {
-  flex: 1 1 240px;
-  min-width: 220px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(93, 244, 255, 0.22);
-  background: rgba(0,0,0,0.55);
-  color: var(--text);
-  outline: none;
-}
-
-input::placeholder {
-  color: rgba(223, 249, 255, 0.4);
-}
-
-input:focus {
-  border-color: rgba(93, 244, 255, 0.75);
-  box-shadow: 0 0 0 3px rgba(93,244,255,0.08);
-}
-
-.status {
-  margin-top: 10px;
-  min-height: 20px;
-  color: #9adfe9;
-}
-
-.subsection {
-  margin-top: 18px;
-}
-
-.player-area {
-  min-height: 120px;
-}
-
-.empty-state {
-  color: rgba(223, 249, 255, 0.5);
-  padding: 18px 0;
-}
-
-.list {
-  display: grid;
-  gap: 12px;
-}
-
-.video-item,
-.event-item {
-  border: 1px solid rgba(93, 244, 255, 0.14);
-  border-radius: 14px;
-  background: rgba(0,0,0,0.3);
-  padding: 14px;
-}
-
-.video-item-title,
-.event-title {
-  margin: 0 0 10px;
-  color: #dbfbff;
-  word-break: break-word;
-}
-
-.video-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.video-frame {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(93, 244, 255, 0.2);
-}
-
-.video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-.calendar-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.month-label {
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.day-name,
-.day-cell {
-  border: 1px solid rgba(93, 244, 255, 0.14);
-  border-radius: 12px;
-  min-height: 68px;
-  background: rgba(0,0,0,0.28);
-  padding: 8px;
-}
-
-.day-name {
-  min-height: auto;
-  text-align: center;
-  color: var(--cyan);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.72rem;
-  padding: 10px 6px;
-  background: rgba(0,0,0,0.44);
-}
-
-.day-cell.other-month { opacity: 0.35; }
-
-.day-cell.today {
-  border-color: rgba(93, 244, 255, 0.9);
-  box-shadow: 0 0 0 1px rgba(93,244,255,0.1);
-}
-
-.day-number {
-  font-weight: 700;
-  font-size: 0.92rem;
-}
-
-.day-event-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan);
-  margin-top: 8px;
-  margin-right: 5px;
-}
-
-.calendar-form {
-  margin-top: 12px;
-  display: grid;
-  gap: 10px;
-}
-
-.calendar-form h3 {
-  margin: 6px 0 4px;
-}
-
-.calendar-form input {
-  width: 100%;
-}
-
-@media (max-width: 920px) {
-  .app {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .content {
-    padding-top: 12px;
-  }
-
-  .panel {
-    max-width: 100%;
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+// ---------- YouTube ----------
+function getVideos() {
+  try {
+    return JSON.parse(localStorage.getItem("savedVideos") || "[]");
+  } catch {
+    return [];
   }
 }
 
-@media (max-width: 640px) {
-  .stats {
-    grid-template-columns: 1fr;
-  }
+function setVideos(videos) {
+  localStorage.setItem("savedVideos", JSON.stringify(videos));
+}
 
-  .input-row,
-  .button-row,
-  .video-actions,
-  .calendar-topbar {
-    flex-direction: column;
-  }
+function normalizeYouTubeUrl(input) {
+  try {
+    const url = new URL(input.trim());
 
-  .neo-btn {
-    width: 100%;
-    text-align: center;
-  }
+    if (url.hostname.includes("youtu.be")) {
+      const id = url.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
+    }
 
-  .calendar-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+    if (url.hostname.includes("youtube.com")) {
+      const videoId = url.searchParams.get("v");
+      if (videoId) return `https://www.youtube-nocookie.com/embed/${videoId}`;
 
-  .day-name {
-    display: none;
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      if (pathParts[0] === "shorts" && pathParts[1]) {
+        return `https://www.youtube-nocookie.com/embed/${pathParts[1]}`;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
   }
 }
+
+function showStatus(message) {
+  document.getElementById("status").textContent = message;
+}
+
+function renderPlayer(embedUrl, label = "Playing now") {
+  const playerArea = document.getElementById("playerArea");
+  playerArea.innerHTML = `
+    <div class="video-item">
+      <p class="video-item-title">${label}</p>
+      <div class="video-frame">
+        <iframe
+          src="${embedUrl}"
+          title="YouTube video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>
+  `;
+}
+
+function playVideo(url) {
+  const embedUrl = normalizeYouTubeUrl(url);
+  if (!embedUrl) {
+    showStatus("That does not look like a valid YouTube link.");
+    return;
+  }
+
+  renderPlayer(embedUrl);
+  showStatus("Video loaded.");
+}
+
+function loadVideos() {
+  const videoList = document.getElementById("videoList");
+  const videos = getVideos();
+
+  document.getElementById("videoCount").textContent = String(videos.length);
+  videoList.innerHTML = "";
+
+  if (videos.length === 0) {
+    videoList.innerHTML = `<div class="empty-state">No saved videos yet.</div>`;
+    return;
+  }
+
+  videos.forEach((url, index) => {
+    const item = document.createElement("div");
+    item.className = "video-item";
+
+    item.innerHTML = `
+      <p class="video-item-title">${url}</p>
+      <div class="video-actions">
+        <button class="neo-btn" data-action="play" data-index="${index}">Watch</button>
+        <button class="neo-btn" data-action="delete" data-index="${index}">Delete</button>
+      </div>
+    `;
+
+    videoList.appendChild(item);
+  });
+
+  videoList.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.index);
+      const action = btn.dataset.action;
+      const videos = getVideos();
+
+      if (action === "play") {
+        playVideo(videos[index]);
+        showPanel("tube");
+      }
+
+      if (action === "delete") {
+        videos.splice(index, 1);
+        setVideos(videos);
+        loadVideos();
+        showStatus("Video deleted.");
+      }
+    });
+  });
+}
+
+function saveVideo() {
+  const input = document.getElementById("videoUrl");
+  const url = input.value.trim();
+
+  if (!url) {
+    showStatus("Paste a YouTube link first.");
+    return;
+  }
+
+  if (!normalizeYouTubeUrl(url)) {
+    showStatus("That does not look like a valid YouTube link.");
+    return;
+  }
+
+  const videos = getVideos();
+  videos.push(url);
+  setVideos(videos);
+
+  input.value = "";
+  loadVideos();
+  showStatus("Video saved.");
+}
+
+document.getElementById("saveBtn").addEventListener("click", saveVideo);
+document.getElementById("videoUrl").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") saveVideo();
+});
+
+loadVideos();
+
+// ---------- Calendar ----------
+function getEvents() {
+  try {
+    return JSON.parse(localStorage.getItem("savedEvents") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function setEvents(events) {
+  localStorage.setItem("savedEvents", JSON.stringify(events));
+}
+
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+function monthName(monthIndex, year) {
+  return new Date(year, monthIndex, 1).toLocaleDateString("en-US", { month: "long" });
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const monthLabel = document.getElementById("monthLabel");
+  const events = getEvents();
+
+  document.getElementById("eventCount").textContent = String(events.length);
+
+  const firstDay = new Date(currentYear, currentMonth, 1);
+  const startDay = (firstDay.getDay() + 6) % 7; // Monday first
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+  monthLabel.textContent = `${monthName(currentMonth, currentYear)} ${currentYear}`;
+  grid.innerHTML = "";
+
+  ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((name) => {
+    const el = document.createElement("div");
+    el.className = "day-name";
+    el.textContent = name;
+    grid.appendChild(el);
+  });
+
+  const totalCells = 42;
+  const today = new Date();
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement("div");
+    cell.className = "day-cell";
+
+    let dayNumber;
+    let cellMonth = currentMonth;
+    let cellYear = currentYear;
+    let otherMonth = false;
+
+    if (i < startDay) {
+      dayNumber = daysInPrevMonth - startDay + i + 1;
+      cellMonth = currentMonth - 1;
+      if (cellMonth < 0) {
+        cellMonth = 11;
+        cellYear = currentYear - 1;
+      }
+      otherMonth = true;
+    } else if (i >= startDay + daysInMonth) {
+      dayNumber = i - (startDay + daysInMonth) + 1;
+      cellMonth = currentMonth + 1;
+      if (cellMonth > 11) {
+        cellMonth = 0;
+        cellYear = currentYear + 1;
+      }
+      otherMonth = true;
+    } else {
+      dayNumber = i - startDay + 1;
+    }
+
+    const eventCount = events.filter((ev) => {
+      const d = new Date(ev.date + "T00:00:00");
+      return (
+        d.getDate() === dayNumber &&
+        d.getMonth() === cellMonth &&
+        d.getFullYear() === cellYear
+      );
+    }).length;
+
+    const isToday =
+      !otherMonth &&
+      dayNumber === today.getDate() &&
+      currentMonth === today.getMonth() &&
+      currentYear === today.getFullYear();
+
+    if (otherMonth) cell.classList.add("other-month");
+    if (isToday) cell.classList.add("today");
+
+    cell.innerHTML = `
+      <div class="day-number">${dayNumber}</div>
+      ${eventCount > 0 ? `<div>${Array.from({ length: eventCount }).map(() => '<span class="day-event-dot"></span>').join("")}</div>` : ""}
+    `;
+
+    grid.appendChild(cell);
+  }
+
+  renderEventsList();
+}
+
+function renderEventsList() {
+  const list = document.getElementById("eventsList");
+  const events = getEvents().sort((a, b) => {
+    const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+    const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+    return aTime - bTime;
+  });
+
+  list.innerHTML = "";
+
+  if (events.length === 0) {
+    list.innerHTML = `<div class="empty-state">No saved events yet.</div>`;
+    return;
+  }
+
+  events.forEach((ev, index) => {
+    const item = document.createElement("div");
+    item.className = "event-item";
+    item.innerHTML = `
+      <div class="event-title">${ev.title}</div>
+      <div>${ev.date}${ev.time ? ` at ${ev.time}` : ""}</div>
+      <div>Reminder: ${ev.reminderMinutes} min before</div>
+      <div class="video-actions" style="margin-top:10px;">
+        <button class="neo-btn" data-delete-event="${index}">Delete</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+
+  list.querySelectorAll("button[data-delete-event]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const index = Number(btn.dataset.deleteEvent);
+      const events = getEvents().sort((a, b) => {
+        const aTime = new Date(`${a.date}T${a.time || "00:00"}`).getTime();
+        const bTime = new Date(`${b.date}T${b.time || "00:00"}`).getTime();
+        return aTime - bTime;
+      });
+
+      events.splice(index, 1);
+      setEvents(events);
+      renderCalendar();
+    });
+  });
+}
+
+function addEvent() {
+  const title = document.getElementById("eventTitle").value.trim();
+  const date = document.getElementById("eventDate").value;
+  const time = document.getElementById("eventTime").value;
+  const reminderMinutes = Number(document.getElementById("reminderMinutes").value || 0);
+
+  if (!title || !date) {
+    return;
+  }
+
+  const events = getEvents();
+  events.push({
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+    title,
+    date,
+    time,
+    reminderMinutes
+  });
+
+  setEvents(events);
+
+  document.getElementById("eventTitle").value = "";
+  document.getElementById("eventDate").value = "";
+  document.getElementById("eventTime").value = "";
+  document.getElementById("reminderMinutes").value = "10";
+
+  renderCalendar();
+}
+
+document.getElementById("addEventBtn").addEventListener("click", addEvent);
+document.getElementById("prevMonth").addEventListener("click", () => {
+  currentMonth--;
+  if (currentMonth < 0) {
+    currentMonth = 11;
+    currentYear--;
+  }
+  renderCalendar();
+});
+document.getElementById("nextMonth").addEventListener("click", () => {
+  currentMonth++;
+  if (currentMonth > 11) {
+    currentMonth = 0;
+    currentYear++;
+  }
+  renderCalendar();
+});
+
+renderCalendar();
+
+// start on main
+showPanel("main");
