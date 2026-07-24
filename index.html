@@ -67,6 +67,7 @@
 
       <section class="panel active" id="home-panel">
         <div class="panel-title">Main</div>
+
         <div class="hero-card">
           <h1>JARVIS HUB</h1>
           <p>Personal command interface</p>
@@ -81,6 +82,36 @@
             <div class="stat-label">Events</div>
             <div class="stat-value" id="eventCount">0</div>
           </div>
+        </div>
+
+        <div class="essay-assist-wrap">
+          <button id="essayAssistBtn" class="essay-assist-fab" type="button">
+            <span class="fab-icon">AI</span>
+            <span class="fab-text">Writer</span>
+          </button>
+
+          <section id="essayAssistPanel" class="essay-assist-panel" aria-hidden="true">
+            <div class="essay-assist-head">
+              <div>
+                <div class="essay-assist-kicker">JARVIS WRITER</div>
+                <h2>Essay & Grammar Assistant</h2>
+              </div>
+              <button id="essayCloseBtn" class="essay-assist-close" type="button">×</button>
+            </div>
+
+            <textarea
+              id="essayInput"
+              class="essay-input"
+              placeholder="Paste your essay here and I’ll check grammar, clarity, and structure..."
+            ></textarea>
+
+            <div class="essay-assist-actions">
+              <button id="essayAnalyzeBtn" class="neo-btn" type="button">Analyze</button>
+              <button id="essayClearBtn" class="neo-btn" type="button">Clear</button>
+            </div>
+
+            <div id="essayOutput" class="essay-output">Paste an essay to get feedback.</div>
+          </section>
         </div>
       </section>
 
