@@ -228,6 +228,7 @@ function renderPlayer(embedUrl, label = "Playing now") {
 
 function playVideo(url) {
   const embedUrl = normalizeYouTubeUrl(url);
+
   if (!embedUrl) {
     showStatus("That does not look like a valid YouTube link.");
     return;
@@ -335,17 +336,6 @@ function monthName(monthIndex, year) {
   return new Date(year, monthIndex, 1).toLocaleDateString("en-US", { month: "long" });
 }
 
-function dateKey(dateObj) {
-  const y = dateObj.getFullYear();
-  const m = String(dateObj.getMonth() + 1).padStart(2, "0");
-  const d = String(dateObj.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function renderTodayPanel() {
-  // not used in this compact version
-}
-
 function renderEventsList() {
   const list = document.getElementById("eventsList");
   const events = getEvents().sort((a, b) => {
@@ -431,18 +421,22 @@ function renderCalendar() {
     if (i < startDay) {
       dayNumber = daysInPrevMonth - startDay + i + 1;
       cellMonth = currentMonth - 1;
+
       if (cellMonth < 0) {
         cellMonth = 11;
         cellYear = currentYear - 1;
       }
+
       otherMonth = true;
     } else if (i >= startDay + daysInMonth) {
       dayNumber = i - (startDay + daysInMonth) + 1;
       cellMonth = currentMonth + 1;
+
       if (cellMonth > 11) {
         cellMonth = 0;
         cellYear = currentYear + 1;
       }
+
       otherMonth = true;
     } else {
       dayNumber = i - startDay + 1;
@@ -495,7 +489,7 @@ function addEvent() {
     title,
     date,
     time,
-    reminderMinutes
+    reminderMinutes,
   });
 
   setEvents(events);
@@ -529,4 +523,144 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 });
 
 renderCalendar();
+
+// Essay & Grammar Assistant
+const essayAssistBtn = document.getElementById("essayAssistBtn");
+const essayAssistPanel = document.getElementById("essayAssistPanel");
+const essayCloseBtn = document.getElementById("essayCloseBtn");
+const essayAnalyzeBtn = document.getElementById("essayAnalyzeBtn");
+const essayClearBtn = document.getElementById("essayClearBtn");
+const essayInput = document.getElementById("essayInput");
+const essayOutput = document.getElementById("essayOutput");
+
+function toggleEssayPanel(forceOpen) {
+  if (!essayAssistPanel) return;
+
+  const open =
+    typeof forceOpen === "boolean"
+      ? forceOpen
+      : !essayAssistPanel.classList.contains("open");
+
+  essayAssistPanel.classList.toggle("open", open);
+  essayAssistPanel.setAttribute("aria-hidden", open ? "false" : "true");
+}
+
+function countWords(text) {
+  const words = text.trim().match(/[A-Za-z']+/g);
+  return words ? words.length : 0;
+}
+
+function splitSentences(text) {
+  return text.replace(/\s+/g, " ").trim().match(/[^.!?]+[.!?]?/g) || [];
+}
+
+function findRepeatedWords(text) {
+  const words = (text.toLowerCase().match(/[a-z']+/g) || []);
+  const repeats = [];
+
+  for (let i = 1; i < words.length; i++) {
+    if (words[i] === words[i - 1] && !repeats.includes(words[i])) {
+      repeats.push(words[i]);
+    }
+  }
+
+  return repeats.slice(0, 5);
+}
+
+function analyzeEssay(text) {
+  const clean = text.trim();
+  const words = countWords(clean);
+  const sentences = splitSentences(clean);
+
+  if (!clean) {
+    return "Paste an essay first.";
+  }
+
+  const suggestions = [];
+  const strengths = [];
+
+  if (words < 80) {
+    suggestions.push("Add more detail and examples.");
+  } else {
+    strengths.push("Good length for a developed response.");
+  }
+
+  if (sentences.length >= 3) {
+    strengths.push("You have multiple sentences and paragraph flow.");
+  } else {
+    suggestions.push("Break this into more sentences or paragraphs.");
+  }
+
+  if (!/[.!?]$/.test(clean)) {
+    suggestions.push("Add punctuation to the end of the essay.");
+  }
+
+  const repeated = findRepeatedWords(clean);
+  if (repeated.length) {
+    suggestions.push(`Repeated words found: ${repeated.join(", ")}`);
+  }
+
+  const lowercaseStarts = (clean.match(/(?:^|[.!?]\s+)([a-z])/g) || []).length;
+  if (lowercaseStarts > 0) {
+    suggestions.push("Some sentences may not start with a capital letter.");
+  }
+
+  const longSentences = sentences.filter((s) => s.trim().split(/\s+/).length > 28);
+  if (longSentences.length) {
+    suggestions.push("Some sentences are long; split them for clarity.");
+  }
+
+  const scoreBase = 60 + Math.min(words, 300) / 12 - suggestions.length * 6 + strengths.length * 4;
+  const score = Math.max(25, Math.min(98, Math.round(scoreBase)));
+
+  let result = `Essay Score: ${score}/100
+Words: ${words}
+Sentences: ${sentences.length}
+
+`;
+
+  if (strengths.length) {
+    result += `Strengths:
+- ${strengths.join("\n- ")}\n\n`;
+  }
+
+  if (suggestions.length) {
+    result += `Suggestions:
+- ${suggestions.join("\n- ")}`;
+  } else {
+    result += "Suggestions:\n- Looks strong. Add one more example or quote for even better support.";
+  }
+
+  return result;
+}
+
+if (essayAssistBtn) {
+  essayAssistBtn.addEventListener("click", () => toggleEssayPanel());
+}
+
+if (essayCloseBtn) {
+  essayCloseBtn.addEventListener("click", () => toggleEssayPanel(false));
+}
+
+if (essayAnalyzeBtn) {
+  essayAnalyzeBtn.addEventListener("click", () => {
+    essayOutput.textContent = analyzeEssay(essayInput.value);
+  });
+}
+
+if (essayClearBtn) {
+  essayClearBtn.addEventListener("click", () => {
+    essayInput.value = "";
+    essayOutput.textContent = "Paste an essay to get feedback.";
+  });
+}
+
+if (essayInput) {
+  essayInput.addEventListener("keydown", (e) => {
+    if (e.ctrlKey && e.key === "Enter") {
+      essayOutput.textContent = analyzeEssay(essayInput.value);
+    }
+  });
+}
+
 showPanel("home");
