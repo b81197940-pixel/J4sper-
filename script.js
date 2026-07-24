@@ -613,20 +613,14 @@ function analyzeEssay(text) {
   const scoreBase = 60 + Math.min(words, 300) / 12 - suggestions.length * 6 + strengths.length * 4;
   const score = Math.max(25, Math.min(98, Math.round(scoreBase)));
 
-  let result = `Essay Score: ${score}/100
-Words: ${words}
-Sentences: ${sentences.length}
-
-`;
+  let result = `Essay Score: ${score}/100\nWords: ${words}\nSentences: ${sentences.length}\n\n`;
 
   if (strengths.length) {
-    result += `Strengths:
-- ${strengths.join("\n- ")}\n\n`;
+    result += `Strengths:\n- ${strengths.join("\n- ")}\n\n`;
   }
 
   if (suggestions.length) {
-    result += `Suggestions:
-- ${suggestions.join("\n- ")}`;
+    result += `Suggestions:\n- ${suggestions.join("\n- ")}`;
   } else {
     result += "Suggestions:\n- Looks strong. Add one more example or quote for even better support.";
   }
