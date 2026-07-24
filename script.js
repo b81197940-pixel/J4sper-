@@ -523,15 +523,16 @@ document.getElementById("nextMonth").addEventListener("click", () => {
 });
 
 renderCalendar();
-
 // Essay & Grammar Assistant
 const essayAssistBtn = document.getElementById("essayAssistBtn");
 const essayAssistPanel = document.getElementById("essayAssistPanel");
 const essayCloseBtn = document.getElementById("essayCloseBtn");
 const essayAnalyzeBtn = document.getElementById("essayAnalyzeBtn");
+const essayRewriteBtn = document.getElementById("essayRewriteBtn");
 const essayClearBtn = document.getElementById("essayClearBtn");
 const essayInput = document.getElementById("essayInput");
 const essayOutput = document.getElementById("essayOutput");
+const essayRewriteOutput = document.getElementById("essayRewriteOutput");
 
 function toggleEssayPanel(forceOpen) {
   if (!essayAssistPanel) return;
@@ -628,6 +629,49 @@ function analyzeEssay(text) {
   return result;
 }
 
+function capitalizeSentence(sentence) {
+  const trimmed = sentence.trim();
+  if (!trimmed) return "";
+  const fixedI = trimmed.replace(/\bi\b/g, "I");
+  return fixedI.charAt(0).toUpperCase() + fixedI.slice(1);
+}
+
+function rewriteEssay(text) {
+  const clean = text.trim();
+  if (!clean) return "Paste an essay first.";
+
+  const paragraphs = clean
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  const rewritten = paragraphs.map((paragraph) => {
+    const normalized = paragraph.replace(/\s+/g, " ").trim();
+    const sentences = normalized.match(/[^.!?]+[.!?]*/g) || [normalized];
+
+    const fixed = sentences
+      .map((sentence) => {
+        let s = sentence.trim();
+        if (!s) return "";
+
+        s = s.replace(/\s+/g, " ");
+        s = s.replace(/\bi\b/g, "I");
+        s = capitalizeSentence(s);
+
+        if (!/[.!?]$/.test(s)) {
+          s += ".";
+        }
+
+        return s;
+      })
+      .filter(Boolean);
+
+    return fixed.join(" ");
+  });
+
+  return rewritten.join("\n\n");
+}
+
 if (essayAssistBtn) {
   essayAssistBtn.addEventListener("click", () => toggleEssayPanel());
 }
@@ -638,7 +682,20 @@ if (essayCloseBtn) {
 
 if (essayAnalyzeBtn) {
   essayAnalyzeBtn.addEventListener("click", () => {
+    toggleEssayPanel(true);
     essayOutput.textContent = analyzeEssay(essayInput.value);
+    essayOutput.scrollTop = 0;
+    essayAssistPanel.scrollTop = 0;
+  });
+}
+
+if (essayRewriteBtn) {
+  essayRewriteBtn.addEventListener("click", () => {
+    toggleEssayPanel(true);
+    const rewritten = rewriteEssay(essayInput.value);
+    essayRewriteOutput.textContent = rewritten;
+    essayRewriteOutput.scrollTop = 0;
+    essayAssistPanel.scrollTop = 0;
   });
 }
 
@@ -646,15 +703,19 @@ if (essayClearBtn) {
   essayClearBtn.addEventListener("click", () => {
     essayInput.value = "";
     essayOutput.textContent = "Paste an essay to get feedback.";
+    essayRewriteOutput.textContent = "Your rewritten essay will appear here.";
   });
 }
 
 if (essayInput) {
   essayInput.addEventListener("keydown", (e) => {
     if (e.ctrlKey && e.key === "Enter") {
+      toggleEssayPanel(true);
       essayOutput.textContent = analyzeEssay(essayInput.value);
+      essayRewriteOutput.textContent = rewriteEssay(essayInput.value);
+      essayOutput.scrollTop = 0;
+      essayRewriteOutput.scrollTop = 0;
+      essayAssistPanel.scrollTop = 0;
     }
   });
 }
-
-showPanel("home");
