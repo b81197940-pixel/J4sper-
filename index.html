@@ -22,6 +22,7 @@
             <div class="brand-subtitle">STARK OS</div>
           </div>
         </div>
+
         <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Collapse sidebar">⟨</button>
       </div>
 
@@ -30,14 +31,17 @@
           <span class="nav-icon">⌂</span>
           <span class="nav-label">Main</span>
         </button>
+
         <button class="nav-item" data-panel="shortcuts" type="button">
           <span class="nav-icon">↗</span>
           <span class="nav-label">Shortcuts</span>
         </button>
+
         <button class="nav-item" data-panel="tube" type="button">
           <span class="nav-icon">▶</span>
           <span class="nav-label">Saved Videos</span>
         </button>
+
         <button class="nav-item" data-panel="calendar" type="button">
           <span class="nav-icon">🗓</span>
           <span class="nav-label">Calendar</span>
@@ -79,42 +83,6 @@
             <div class="stat-value" id="eventCount">0</div>
           </div>
         </div>
-
-        <div class="essay-assist-wrap">
-          <button id="essayAssistBtn" class="essay-assist-fab" type="button">
-            <span class="fab-icon">AI</span>
-            <span class="fab-text">Writer</span>
-          </button>
-
-          <section id="essayAssistPanel" class="essay-assist-panel" aria-hidden="true">
-            <div class="essay-assist-head">
-              <div>
-                <div class="essay-assist-kicker">JARVIS WRITER</div>
-                <h2>Essay & Grammar Assistant</h2>
-              </div>
-              <button id="essayCloseBtn" class="essay-assist-close" type="button">×</button>
-            </div>
-
-            <textarea
-              id="essayInput"
-              class="essay-input"
-              placeholder="Paste your essay here and I’ll check grammar, clarity, and structure..."
-            ></textarea>
-
-            <div class="essay-assist-actions">
-              <button id="essayAnalyzeBtn" class="neo-btn" type="button">Analyze</button>
-              <button id="essayRewriteBtn" class="neo-btn" type="button">Rewrite</button>
-              <button id="essayClearBtn" class="neo-btn" type="button">Clear</button>
-            </div>
-
-            <div id="essayOutput" class="essay-output">Paste an essay to get feedback.</div>
-
-            <div class="essay-rewrite-label">Cleaned Rewrite</div>
-            <div id="essayRewriteOutput" class="essay-rewrite">
-              Your rewritten essay will appear here.
-            </div>
-          </section>
-        </div>
       </section>
 
       <section class="panel" id="shortcuts-panel">
@@ -125,30 +93,37 @@
 
           <div class="wheel-stage" id="shortcutWheel">
             <div class="wheel-ring"></div>
+
             <button class="wheel-item" type="button" data-index="0" style="--index:0">
               <span class="wheel-item-icon">▶</span>
               <span class="wheel-item-label">YouTube</span>
             </button>
+
             <button class="wheel-item" type="button" data-index="1" style="--index:1">
               <span class="wheel-item-icon">♫</span>
               <span class="wheel-item-label">Spotify</span>
             </button>
+
             <button class="wheel-item" type="button" data-index="2" style="--index:2">
               <span class="wheel-item-icon">⌂</span>
               <span class="wheel-item-label">Browser</span>
             </button>
+
             <button class="wheel-item" type="button" data-index="3" style="--index:3">
               <span class="wheel-item-icon">B</span>
               <span class="wheel-item-label">Bing</span>
             </button>
+
             <button class="wheel-item" type="button" data-index="4" style="--index:4">
               <span class="wheel-item-icon">D</span>
               <span class="wheel-item-label">Drive</span>
             </button>
+
             <button class="wheel-item" type="button" data-index="5" style="--index:5">
               <span class="wheel-item-icon">@</span>
               <span class="wheel-item-label">Gmail</span>
             </button>
+
             <button class="wheel-center" id="shortcutOpenBtn" type="button">
               <span id="shortcutActiveIcon">▶</span>
               <strong id="shortcutActiveLabel">YouTube</strong>
@@ -212,6 +187,41 @@
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- Floating essay assistant moved outside the panel so it stays bottom-right -->
+  <div class="essay-assist-wrap">
+    <button id="essayAssistBtn" class="essay-assist-fab" type="button">
+      <span class="fab-icon">AI</span>
+      <span class="fab-text">Writer</span>
+    </button>
+
+    <section id="essayAssistPanel" class="essay-assist-panel" aria-hidden="true">
+      <div class="essay-assist-head">
+        <div>
+          <div class="essay-assist-kicker">JARVIS WRITER</div>
+          <h2>Essay & Grammar Assistant</h2>
+        </div>
+        <button id="essayCloseBtn" class="essay-assist-close" type="button">×</button>
+      </div>
+
+      <textarea
+        id="essayInput"
+        class="essay-input"
+        placeholder="Paste your essay here and I’ll check grammar, clarity, and structure..."
+      ></textarea>
+
+      <div class="essay-assist-actions">
+        <button id="essayAnalyzeBtn" class="neo-btn" type="button">Analyze</button>
+        <button id="essayRewriteBtn" class="neo-btn" type="button">Rewrite</button>
+        <button id="essayClearBtn" class="neo-btn" type="button">Clear</button>
+      </div>
+
+      <div id="essayOutput" class="essay-output">Paste an essay to get feedback.</div>
+
+      <div class="essay-rewrite-label">Cleaned Rewrite</div>
+      <div id="essayRewriteOutput" class="essay-rewrite">Your rewritten essay will appear here.</div>
+    </section>
   </div>
 
   <script src="script.js"></script>
