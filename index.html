@@ -69,6 +69,12 @@
         <div class="panel-title">Main</div>
 
         <div class="hero-card">
+          <div class="hero-hud" aria-hidden="true">
+            <span class="hero-ring ring-1"></span>
+            <span class="hero-ring ring-2"></span>
+            <span class="hero-ring ring-3"></span>
+            <span class="hero-crosshair"></span>
+          </div>
           <h1>JARVIS HUB</h1>
           <p>Personal command interface</p>
         </div>
@@ -89,7 +95,7 @@
         <div class="panel-title">Shortcuts</div>
 
         <div class="wheel-wrap">
-          <div class="wheel-hint">Spin the wheel or click an app</div>
+          <div class="wheel-hint">Spin the wheel or click an app — it opens right here</div>
 
           <div class="wheel-stage" id="shortcutWheel">
             <div class="wheel-ring"></div>
@@ -222,6 +228,37 @@
       <div class="essay-rewrite-label">Cleaned Rewrite</div>
       <div id="essayRewriteOutput" class="essay-rewrite">Your rewritten essay will appear here.</div>
     </section>
+  </div>
+
+  <!-- In-app viewer: opens shortcut apps right inside the dashboard -->
+  <div id="appViewerOverlay" class="app-viewer-overlay" aria-hidden="true">
+    <div class="app-viewer">
+      <div class="app-viewer-head">
+        <div class="app-viewer-title">
+          <span id="appViewerIcon" class="app-viewer-icon">▶</span>
+          <strong id="appViewerLabel">YouTube</strong>
+        </div>
+        <div class="app-viewer-actions">
+          <a id="appViewerOpenNew" class="neo-btn" href="#" target="_blank" rel="noopener noreferrer">Open in New Tab ↗</a>
+          <button id="appViewerCloseBtn" class="essay-assist-close" type="button" aria-label="Close">×</button>
+        </div>
+      </div>
+
+      <div class="app-viewer-notice" id="appViewerNotice">
+        Some services (Google, Spotify, etc.) block embedding for security reasons. If this looks blank, use "Open in New Tab" above.
+      </div>
+
+      <div class="app-viewer-body">
+        <iframe
+          id="appViewerFrame"
+          src=""
+          title="App viewer"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
