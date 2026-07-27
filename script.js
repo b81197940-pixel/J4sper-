@@ -128,9 +128,52 @@ function selectShortcut(index) {
   renderShortcutWheel();
 }
 
+// --- In-app viewer: shortcuts open inside the dashboard, not a new tab ---
+const appViewerOverlay = document.getElementById("appViewerOverlay");
+const appViewerFrame = document.getElementById("appViewerFrame");
+const appViewerLabel = document.getElementById("appViewerLabel");
+const appViewerIcon = document.getElementById("appViewerIcon");
+const appViewerOpenNew = document.getElementById("appViewerOpenNew");
+const appViewerCloseBtn = document.getElementById("appViewerCloseBtn");
+
+function openAppViewer(app) {
+  if (appViewerLabel) appViewerLabel.textContent = app.name;
+  if (appViewerIcon) appViewerIcon.textContent = app.icon;
+  if (appViewerOpenNew) appViewerOpenNew.href = app.url;
+  if (appViewerFrame) appViewerFrame.src = app.url;
+
+  if (appViewerOverlay) {
+    appViewerOverlay.classList.add("open");
+    appViewerOverlay.setAttribute("aria-hidden", "false");
+  }
+}
+
+function closeAppViewer() {
+  if (!appViewerOverlay) return;
+  appViewerOverlay.classList.remove("open");
+  appViewerOverlay.setAttribute("aria-hidden", "true");
+  if (appViewerFrame) appViewerFrame.src = "about:blank";
+}
+
+if (appViewerCloseBtn) {
+  appViewerCloseBtn.addEventListener("click", closeAppViewer);
+}
+
+if (appViewerOverlay) {
+  appViewerOverlay.addEventListener("click", (e) => {
+    if (e.target === appViewerOverlay) closeAppViewer();
+  });
+}
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && appViewerOverlay && appViewerOverlay.classList.contains("open")) {
+    closeAppViewer();
+  }
+});
+
 function openShortcut(index = selectedShortcut) {
   const app = shortcutApps[index];
-  window.open(app.url, "_blank", "noopener,noreferrer");
+  openAppViewer(app);
 }
 
 document.querySelectorAll(".wheel-item").forEach((btn) => {
