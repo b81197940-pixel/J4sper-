@@ -287,6 +287,7 @@ function loadVideos() {
 
   document.getElementById("videoCount").textContent = String(videos.length);
   videoList.innerHTML = "";
+  updateHudSignal();
 
   if (videos.length === 0) {
     videoList.innerHTML = `<div class="empty-state">No saved videos yet.</div>`;
@@ -350,6 +351,19 @@ function saveVideo() {
   input.value = "";
   loadVideos();
   showStatus("Video saved.");
+}
+
+function updateHudSignal() {
+  const bar = document.getElementById("hudSignalBar");
+  const pct = document.getElementById("hudSignalPct");
+  if (!bar || !pct) return;
+
+  const total = getVideos().length + getEvents().length;
+  const value = Math.max(10, Math.min(100, total * 12));
+
+  const fill = bar.querySelector("i");
+  if (fill) fill.style.width = `${value}%`;
+  pct.textContent = `${value}%`;
 }
 
 document.getElementById("saveBtn").addEventListener("click", saveVideo);
@@ -431,6 +445,7 @@ function renderCalendar() {
   const events = getEvents();
 
   document.getElementById("eventCount").textContent = String(events.length);
+  updateHudSignal();
 
   if (!grid || !monthLabel) return;
 
